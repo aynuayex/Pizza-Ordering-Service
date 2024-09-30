@@ -1,4 +1,28 @@
-:root {
+body {
+  margin: 0;
+  padding: 0;
+  /* background-color: #F0F2FF; */
+}
+
+  .react-multi-carousel-dot-list {
+    position: absolute;
+    background-color: "#FFF8F1";
+    bottom: -50px; 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .carousel-item-padding {
+    /* margin-right: 140px; */
+    padding-right: 140px;
+  }
+  .carousel-item-padding-fasting {
+    padding-right: 80px;
+  }
+  
+
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -65,4 +89,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */

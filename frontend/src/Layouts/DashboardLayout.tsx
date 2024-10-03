@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Outlet,
   Link as RouterLink,
@@ -129,6 +129,13 @@ export default function DashboardLayout() {
   const { setAuth } = useAuth();
   const logOut = useLogOut();
 
+  // useEffect(() => {
+  //   if (location.pathname === "/dashboard") {
+  //     navigate("/register_restaurant");
+  //     return;
+  //   }
+  // }, [])
+  
   const list = [
     {
       text: "Orders",
@@ -148,7 +155,7 @@ export default function DashboardLayout() {
           />
         </svg>
       ),
-      to: "/dashboard",
+      to: "/dashboard/layout/order",
       // to: "/dashboard/orders",
     },
     {
@@ -167,17 +174,17 @@ export default function DashboardLayout() {
           />
         </svg>
       ),
-      to: "/dashboard/menu",
+      to: "/dashboard/layout/menu",
     },
     {
       text: "Role",
       icon: React.createElement(PersonOutlineOutlinedIcon),
-      to: "/dashboard/role",
+      to: "/dashboard/layout/role",
     },
     {
       text: "User",
       icon: React.createElement(AccountCircleOutlinedIcon),
-      to: "/dashboard/user",
+      to: "/dashboard/layout/user",
     },
   ];
 
@@ -194,6 +201,11 @@ export default function DashboardLayout() {
       accessToken: "",
     });
   };
+
+  // if (location.pathname === "/dashboard") {
+  //   navigate("/register_restaurant");
+  //   return;
+  // }
 
   return (
     <Box sx={{ height: "100vh", display: "flex", bgcolor: "#F8F8F8" }}>
@@ -221,7 +233,13 @@ export default function DashboardLayout() {
           >
             <MenuIcon />
           </IconButton>
-          <Box sx={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
             <Typography
               variant="h6"
               noWrap
@@ -237,7 +255,13 @@ export default function DashboardLayout() {
             >
               Orders
             </Typography>
-            <Box sx={{ width: "88px", display: "flex", justifyContent: "space-between" }}>
+            <Box
+              sx={{
+                width: "88px",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <Badge badgeContent={1} color="primary">
                 <NotificationsOutlinedIcon
                   color="action"

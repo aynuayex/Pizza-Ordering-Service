@@ -14,11 +14,13 @@ import {
   Typography,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import PhoneIcon from "@mui/icons-material/Phone";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import Divider from "@mui/material/Divider";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import navbar_logo from "../assets/navbar_logo.svg";
 import pizza_slice from "../assets/pizza_slice.svg";
@@ -28,29 +30,28 @@ import useAuth from "@/hooks/useAuth";
 import { LoadingButton } from "@mui/lab";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginSchema, loginSchema } from "@/schema/loginSchema";
-import { createMongoAbility } from "@casl/ability";
-import { AbilityContext } from "@/context/AbilityProvider";
+import { AddAdminSchema, addAdminSchema } from "@/schema/addAdminSchema";
 
-function Login() {
+function AddAdmin() {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAuth, setPersist } = useAuth();
-  const ability = useContext(AbilityContext);
+  const { setAuth } = useAuth();
 
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
     control,
-  } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<AddAdminSchema>({
+    resolver: zodResolver(addAdminSchema),
     defaultValues: {
+      adminName: "",
       email: "",
+      phoneNumber: "",
       password: "",
-      persist: JSON.parse(localStorage.getItem("persist") || "false"),
+      confirmPassword: "",
     },
   });
 
@@ -69,43 +70,36 @@ function Login() {
     setOpen(false);
   };
 
-  function updateAbility(permissions: string) {
-    const { rules } = createMongoAbility(JSON.parse(permissions));
-
-    ability.update(rules);
-  }
-
-  const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
-    try {
-      setPersist(data.persist);
-      localStorage.setItem("persist", JSON.stringify(data.persist));
-      console.log({ data, role });
-      const response = await axios.post("/login", data);
-      if (response.status === 200) {
-        const { id, email, fullName, success, role, accessToken } =
-          response.data;
-        setAuth({ id, email, fullName, role, accessToken });
-        console.log(response.data);
-        updateAbility(role.permissions);
-
-        navigate("/dashboard/layout/order", { state: { message: success }, replace: true });
-      }
-      console.log(response);
-    } catch (err: any) {
-      console.error(err);
-      if (!err?.response) {
-        setErrMsg("Server can not be reached, Please Try again later!");
-      } else if (err.response?.status === 400) {
-        setErrMsg("Missing Email or Password!");
-      } else if (err.response?.status === 401) {
-        setErrMsg("Unauthorized, Your Email and/or Password is not correct!");
-      } else if (err.response?.status === 403) {
-        setErrMsg("Forbidden,Your account is not approved by Admin!");
-      } else {
-        setErrMsg("Login Failed, Please Try again later!");
-      }
-      setOpen(true);
-    }
+  const onSubmit: SubmitHandler<AddAdminSchema> = async (data) => {
+    navigate('/dashboard/order')
+    // try {
+    //   console.log({ data, role });
+    //   const response = await axios.post("/register/admin", {
+    //     ...data,
+    //     role: role || "OWNER",
+    //   });
+    //   if (response.status === 200) {
+    //     const { id, email, fullName, success, role, accessToken } =
+    //       response.data;
+    //     setAuth({ id, email, fullName, role, accessToken });
+    //     navigate("/dashboard", { state: { message: success }, replace: true });
+    //   }
+    //   console.log(response);
+    // } catch (err: any) {
+    //   console.error(err);
+    //   if (!err?.response) {
+    //     setErrMsg("Server can not be reached, Please Try again later!");
+    //   } else if (err.response?.status === 400) {
+    //     setErrMsg("Missing Email or Password!");
+    //   } else if (err.response?.status === 401) {
+    //     setErrMsg("Unauthorized, Your Email and/or Password is not correct!");
+    //   } else if (err.response?.status === 403) {
+    //     setErrMsg("Forbidden,Your account is not approved by Admin!");
+    //   } else {
+    //     setErrMsg("Login Failed, Please Try again later!");
+    //   }
+    //   setOpen(true);
+    // }
   };
 
   return (
@@ -180,10 +174,30 @@ function Login() {
             </Typography>
           </Stack>
           <Typography variant="h5" sx={{ mb: -1 }}>
-            Login
+            Add Admin
             {/* /{role === "SYSADMIN" ? "Admin" : "Owner"} */}
           </Typography>
           <Divider sx={{ mb: 3 }} />
+
+          <Controller
+            name="adminName"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label={
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <AccountCircleOutlinedIcon />
+                    <span style={{ marginLeft: 8 }}>Full Name</span>
+                  </div>
+                }
+                type="text"
+                disabled={isSubmitting}
+                error={!!errors.adminName}
+                helperText={errors.adminName?.message}
+              />
+            )}
+          />
 
           <Controller
             name="email"
@@ -201,6 +215,26 @@ function Login() {
                 }
                 error={!!errors.email}
                 helperText={errors.email?.message}
+              />
+            )}
+          />
+
+          <Controller
+            name="phoneNumber"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="tel"
+                disabled={isSubmitting}
+                label={
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <PhoneIcon />
+                    <span style={{ marginLeft: 8 }}>Phone Number</span>
+                  </div>
+                }
+                error={!!errors.phoneNumber}
+                helperText={errors.phoneNumber?.message}
               />
             )}
           />
@@ -241,47 +275,55 @@ function Login() {
           />
 
           <Controller
-            name="persist"
+            name="confirmPassword"
             control={control}
             render={({ field }) => (
-              <FormControl error={!!errors.persist}>
-                <FormControlLabel
-                  label="Remember me"
-                  control={<Checkbox {...field} disabled={isSubmitting} />}
-                />
-                {errors.persist && (
-                  <FormHelperText>{errors.persist.message}</FormHelperText>
-                )}
-              </FormControl>
+              <TextField
+                {...field}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                label={
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <LockOutlinedIcon />
+                    <span style={{ marginLeft: 8 }}>Confirm Password</span>
+                  </div>
+                }
+                disabled={isSubmitting}
+                type={showPassword ? "text" : "password"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             )}
           />
 
-          <LoadingButton
+          <LoadingButton size="large"
             sx={{
+              mt: 2,
               bgcolor: "#FF8100",
             }}
             type="submit"
             variant="contained"
             loading={isSubmitting}
           >
-            Login
+            Continue
           </LoadingButton>
-          <Typography variant="subtitle2" textAlign={"center"}>
-            Have not an account?
-            <Link
-              color="#FF8100"
-              underline="none"
-              component={RouterLink}
-              to="/"
-            >
-              {" "}
-              Sign up
-            </Link>
-          </Typography>
         </Box>
       </Stack>
     </Box>
   );
 }
 
-export default Login;
+export default AddAdmin;

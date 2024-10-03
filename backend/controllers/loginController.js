@@ -6,26 +6,28 @@ const handleLogin = async (req, res) => {
   try {
     const cookie = req.cookies;
     console.log(req.body);
-    const { email, password, role } = req.body;
-    if (!email || !password || !role) {
+    const { email, password } = req.body;
+    if (!email || !password) {
       return res
         .status(400)
-        .json({ message: "email, role and password are required!" });
+        .json({ message: "email and password are required!" });
     }
-    const foundUser = await prisma.user.findFirst({ where: { email, role } });
+    const foundUser = await prisma.user.findUnique({ where: { email }, 
+      include: { role: true },  // Include the role relation 
+      });
     if (!foundUser) return res.sendStatus(401); //unAuthorized
     //evaluate password
     const match = await bcrypt.compare(password, foundUser?.password);
     if (!match) return res.sendStatus(401);
-    if (!foundUser.approved) return res.sendStatus(403); //forbiden
+    if (!foundUser.active) return res.sendStatus(403); //forbiden
       // create JWTs
       const accessToken = jwt.sign(
-        { userInfo: { fullName: foundUser.fullName, email, role } },
+        { userInfo: { fullName: foundUser.fullName, email, role: foundUser.role } },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: "1h" }
       );
       const newRefreshToken = jwt.sign(
-        { userInfo: { fullName: foundUser.fullName, email, role } },
+        { userInfo: { fullName: foundUser.fullName, email, role: foundUser.role } },
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: "1d" }
       );
@@ -42,7 +44,7 @@ const handleLogin = async (req, res) => {
                 3) If 1 & 2, reuse detection is needed to clear all RTs when user logs in
             */
                 const refreshToken = cookie.jwt;
-                const foundToken = await prisma.user.findFirst({ where: { email, refreshToken: { has: refreshToken}, role }});
+                const foundToken = await prisma.user.findFirst({ where: { email, refreshToken: { has: refreshToken} }});
     
                 // Detected refresh token reuse!
                 if (!foundToken) {
@@ -59,20 +61,21 @@ const handleLogin = async (req, res) => {
       }
 
       const result = await prisma.user.update({
-        where: { fullName: foundUser.fullName, email, role },
+        where: { fullName: foundUser.fullName, email },
         data: { refreshToken: [...newRefreshTokenArray, newRefreshToken] },
       });
       console.log(result);
-
+console.log("hi")
       res.cookie("jwt", newRefreshToken, {
         httpOnly: true,
         sameSite: "None",
         secure: true, // comment this when using thunderclient to test refreshToken otherwise cookie will not be set on req.cookies
         maxAge: 24 * 60 * 60 * 1000,
       });
-      res.status(200).json({ success: `Success, Logged in as ${result.fullName}!`, id: result.id ,email, fullName: result.fullName, role, accessToken });
+      res.status(200).json({ success: `Success, Logged in as ${result.fullName}!`, id: result.id ,email, fullName: result.fullName, role: foundUser.role, accessToken });
     
   } catch (err) {
+    console.log({err})
     res.status(500).json({ message: err.message });
   }
 };

@@ -60,8 +60,8 @@ app.use(
 );
 
 app.use(
-  "/books", verifyJWT,
-  require("./routes/book") 
+  "/role", verifyJWT,
+  require("./routes/role") 
 );
 app.use(
   "/owners", verifyJWT,

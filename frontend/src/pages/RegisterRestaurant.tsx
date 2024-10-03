@@ -24,6 +24,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
 import { useContext, useState } from "react";
 
 import navbar_logo from "../assets/navbar_logo.svg";
@@ -33,13 +35,16 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import smile from "@/assets/smile.png";
 import { LoadingButton } from "@mui/lab";
-import { signUpSchema, SignUpSchema } from "@/schema/signUpSchema";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createMongoAbility } from "@casl/ability";
+import {
+  registerRestaurantSchema,
+  RegisterRestaurantSchema,
+} from "@/schema/registerRestaurantSchema";
 import { AbilityContext } from "@/context/AbilityProvider";
+import { createMongoAbility } from "@casl/ability";
 
-function Register() {
+function RegisterRestaurant() {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -52,14 +57,15 @@ function Register() {
     handleSubmit,
     formState: { isSubmitting, errors },
     control,
-  } = useForm<SignUpSchema>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<RegisterRestaurantSchema>({
+    resolver: zodResolver(registerRestaurantSchema),
     defaultValues: {
-      fullName: "",
+      adminName: "Super Admin",
       email: "",
       password: "",
       confirmPassword: "",
       location: "",
+      restaurantName: "",
       phoneNumber: "",
       termsAndConditions: false,
     },
@@ -79,10 +85,10 @@ function Register() {
     ability.update(rules);
   }
 
-  const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
+  const onSubmit: SubmitHandler<RegisterRestaurantSchema> = async (data) => {
     try {
       console.log({ data });
-      const response = await axios.post("/register/customer", data);
+      const response = await axios.post("/register/restaurant", data);
       if (response.status === 201) {
         const { success, id, email, fullName, role, accessToken } =
           response.data;
@@ -90,7 +96,8 @@ function Register() {
 
         updateAbility(role.permissions);
 
-        navigate("/order");
+        navigate("/dashboard/layout/order");
+        // navigate('/add_admin');
         // setOpenDialog(true);
       }
       console.log(response);
@@ -131,8 +138,8 @@ function Register() {
             {errMsg}
           </Alert>
         </Snackbar>
-
-        {/* <Dialog
+        {/* 
+        <Dialog
           PaperProps={{
             sx: {
               borderRadius: 6,
@@ -238,7 +245,7 @@ function Register() {
             p: 8,
           }}
         >
-          <Stack direction={"row"} spacing={1} mb={4}>
+          <Stack direction={"row"} spacing={1} mb={2}>
             <img
               src={navbar_logo}
               alt="medium pizza slice image"
@@ -260,7 +267,7 @@ function Register() {
           <Divider sx={{ mb: 3 }} /> */}
 
           <Controller
-            name="fullName"
+            name="adminName"
             control={control}
             render={({ field }) => (
               <TextField
@@ -271,10 +278,11 @@ function Register() {
                     <span style={{ marginLeft: 8 }}>Full Name</span>
                   </div>
                 }
+                size="small"
                 type="text"
                 disabled={isSubmitting}
-                error={!!errors.fullName}
-                helperText={errors.fullName?.message}
+                error={!!errors.adminName}
+                helperText={errors.adminName?.message}
               />
             )}
           />
@@ -285,6 +293,7 @@ function Register() {
             render={({ field }) => (
               <TextField
                 {...field}
+                size="small"
                 type="email"
                 disabled={isSubmitting}
                 label={
@@ -305,6 +314,7 @@ function Register() {
             render={({ field }) => (
               <TextField
                 {...field}
+                size="small"
                 error={!!errors.password}
                 helperText={errors.password?.message}
                 label={
@@ -340,6 +350,7 @@ function Register() {
             render={({ field }) => (
               <TextField
                 {...field}
+                size="small"
                 error={!!errors.confirmPassword}
                 helperText={errors.confirmPassword?.message}
                 label={
@@ -370,11 +381,53 @@ function Register() {
           />
 
           <Controller
+            name="phoneNumber"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="tel"
+                size="small"
+                disabled={isSubmitting}
+                label={
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <PhoneIcon />
+                    <span style={{ marginLeft: 8 }}>Phone Number</span>
+                  </div>
+                }
+                error={!!errors.phoneNumber}
+                helperText={errors.phoneNumber?.message}
+              />
+            )}
+          />
+          <Controller
+            name="restaurantName"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                size="small"
+                type="text"
+                disabled={isSubmitting}
+                label={
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <RestaurantIcon />
+                    <span style={{ marginLeft: 8 }}>Restaurant Name</span>
+                  </div>
+                }
+                error={!!errors.restaurantName}
+                helperText={errors.restaurantName?.message}
+              />
+            )}
+          />
+
+          <Controller
             name="location"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
+                size="small"
                 type="text"
                 disabled={isSubmitting}
                 label={
@@ -389,25 +442,27 @@ function Register() {
             )}
           />
 
-          <Controller
-            name="phoneNumber"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                type="tel"
-                disabled={isSubmitting}
-                label={
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <PhoneIcon />
-                    <span style={{ marginLeft: 8 }}>Phone Number</span>
-                  </div>
-                }
-                error={!!errors.location}
-                helperText={errors.location?.message}
-              />
-            )}
-          />
+          <Button
+            size="small"
+            fullWidth
+            startIcon={<FileUploadOutlinedIcon />}
+            sx={{
+              // width: "554px",
+              // height: "56px",
+              padding: "10px",
+              border: "1px dashed black",
+              borderRadius: "5px",
+              textTransform: "none",
+              color: "#FF8100",
+              fontFamily: "Inter",
+              fontSize: "18px",
+              fontWeight: 500,
+              lineHeight: "24px",
+              textAlign: "left",
+            }}
+          >
+            Upload Logo
+          </Button>
 
           <Controller
             name="termsAndConditions"
@@ -456,4 +511,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default RegisterRestaurant;

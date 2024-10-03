@@ -19,12 +19,18 @@ export const addOrderSchema = z.object({
       invalid_type_error: "price must be a number",
     })
     .min(5, "price must be greater than 5."),
-
-  mozzarella: z.boolean(),
-  tomato: z.boolean(),
-  bell_peppers: z.boolean(),
-  onions: z.boolean(),
-  olives: z.boolean(),
+    
+    toppings: z.array(
+      z.object({
+        name: z.string(),
+        checked: z.boolean(),
+      })
+    ),
+  // mozzarella: z.boolean(),
+  // tomato: z.boolean(),
+  // bell_peppers: z.boolean(),
+  // onions: z.boolean(),
+  // olives: z.boolean(),
 });
 
 export type AddOrderSchema = z.infer<typeof addOrderSchema>;

@@ -4,7 +4,10 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormGroup,
   FormHelperText,
+  FormLabel,
+  Grid,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -43,6 +46,14 @@ const responsive = {
   },
 };
 
+const toppings = [
+  { name: "mozzarella", label: "Mozzarella" },
+  { name: "tomato", label: "Tomato" },
+  { name: "bell_peppers", label: "Bell Peppers" },
+  { name: "onions", label: "Onions" },
+  { name: "olives", label: "Olives" },
+];
+
 const Order = () => {
   const [count, setCount] = useState(1);
   const [open, setOpen] = useState(false);
@@ -55,11 +66,16 @@ const Order = () => {
   } = useForm<OrderSchema>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      mozzarella: true,
-      tomato: true,
-      bell_peppers: true,
-      onions: true,
-      olives: false,
+      toppings: toppings.map((topping) => ({
+        name: topping.name,
+        checked: topping.name === "olives" ? false : true, // default state
+      })),
+
+      // mozzarella: true,
+      // tomato: true,
+      // bell_peppers: true,
+      // onions: true,
+      // olives: false,
     },
   });
 
@@ -231,7 +247,8 @@ const Order = () => {
             Margherita
           </Typography>
           {/* </Box> */}
-          <Box
+
+          {/* <Box
             // width={"412px"}
             height="107px"
             sx={{
@@ -382,7 +399,53 @@ const Order = () => {
                 </FormControl>
               )}
             />
-          </Box>
+          </Box> */}
+
+          <Controller
+            name="toppings"
+            control={control}
+            render={({ field: { value = [], onChange } }) => (
+                  <Grid container spacing="5px">
+                    {toppings.map((topping, index) => (
+                      <Grid item key={topping.name}>
+                        <FormControl
+                          error={!!errors.toppings?.[index]?.checked}
+                        >
+                          <FormControlLabel
+                            label={topping.label}
+                            control={
+                              <Checkbox
+                                checked={value[index]?.checked || false}
+                                onChange={(e) => {
+                                  const updatedToppings = [...value];
+                                  updatedToppings[index] = {
+                                    ...updatedToppings[index],
+                                    checked: e.target.checked,
+                                  };
+                                  onChange(updatedToppings);
+                                }}
+                                disabled={isSubmitting}
+                                size="large"
+                                sx={{
+                                  "&.Mui-checked": {
+                                    color: "#FF8100",
+                                  },
+                                }}
+                              />
+                            }
+                          />
+                          {errors.toppings?.[index]?.checked && (
+                            <FormHelperText>
+                              {errors.toppings[index].checked.message}
+                            </FormHelperText>
+                          )}
+                        </FormControl>
+                      </Grid>
+                    ))}
+                  </Grid>
+            )}
+          />
+
           <Box
             sx={{
               //   width: "395px",

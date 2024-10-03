@@ -9,6 +9,9 @@ import {
   FormControlLabel,
   FormHelperText,
   Checkbox,
+  Grid,
+  FormLabel,
+  FormGroup,
 } from "@mui/material";
 import { useState } from "react";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
@@ -18,7 +21,15 @@ import { addOrderSchema, AddOrderSchema } from "@/schema/addOrderSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Modal from "@/components/Modal";
 
-const Menu = () => {
+const toppings = [
+  { name: "mozzarella", label: "Mozzarella" },
+  { name: "tomato", label: "Tomato" },
+  { name: "bell_peppers", label: "Bell Peppers" },
+  { name: "onions", label: "Onions" },
+  { name: "olives", label: "Olives" },
+];
+
+const Menus = () => {
   const [open, setOpen] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [message, setMessage] = useState("");
@@ -31,8 +42,12 @@ const Menu = () => {
   } = useForm<AddOrderSchema>({
     resolver: zodResolver(addOrderSchema),
     defaultValues: {
-      // name: "",
-      // price: "",
+      name: "",
+      // price: 0,
+      toppings: toppings.map((ingredient) => ({
+        name: ingredient.name,
+        checked: ingredient.name === "olives" ? false : true, // default state
+      })),
     },
   });
 
@@ -141,10 +156,10 @@ const Menu = () => {
             />
           )}
         />
-        <Box
+        {/* <Box
           sx={{
             display: "flex",
-            
+
             alignItems: "center",
             gap: 8,
           }}
@@ -301,7 +316,71 @@ const Menu = () => {
               )}
             />
           </Box>
-        </Box>
+        </Box> */}
+
+        <Controller
+          name="toppings"
+          control={control}
+          render={({ field: { value = [], onChange } }) => (
+            <FormControl
+              component="fieldset"
+              // variant="standard"
+            >
+              <FormLabel
+                component="legend"
+                sx={{
+                  color: "#00000080",
+                  fontFamily: "Roboto",
+                  fontSize: "22px",
+                  fontWeight: 400,
+                  lineHeight: "24px",
+                  letterSpacing: "0.15000000596046448px",
+                  textAlign: "left",
+                }}
+              >
+                Toppings
+              </FormLabel>
+              <FormGroup>
+                <Grid container spacing="5px">
+                  {toppings.map((topping, index) => (
+                    <Grid item key={topping.name}>
+                      <FormControl error={!!errors.toppings?.[index]?.checked}>
+                        <FormControlLabel
+                          label={topping.label}
+                          control={
+                            <Checkbox
+                              checked={value[index]?.checked || false}
+                              onChange={(e) => {
+                                const updatedToppings = [...value];
+                                updatedToppings[index] = {
+                                  ...updatedToppings[index],
+                                  checked: e.target.checked,
+                                };
+                                onChange(updatedToppings);
+                              }}
+                              disabled={isSubmitting}
+                              size="large"
+                              sx={{
+                                "&.Mui-checked": {
+                                  color: "#FF8100",
+                                },
+                              }}
+                            />
+                          }
+                        />
+                        {errors.toppings?.[index]?.checked && (
+                          <FormHelperText>
+                            {errors.toppings[index].checked.message}
+                          </FormHelperText>
+                        )}
+                      </FormControl>
+                    </Grid>
+                  ))}
+                </Grid>
+              </FormGroup>
+            </FormControl>
+          )}
+        />
 
         <Controller
           name="price"
@@ -361,4 +440,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default Menus;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -6,7 +6,7 @@ import {
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
   type MRT_SortingState,
-} from 'material-react-table';
+} from "material-react-table";
 
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
@@ -25,7 +25,7 @@ type User = {
   phoneNumber: string;
 };
 
-const Orders = () => {
+const Roles = () => {
   //data and fetching state
   const [data, setData] = useState<User[]>([]);
   const [isError, setIsError] = useState(false);
@@ -37,54 +37,54 @@ const Orders = () => {
 
   //table state
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
-    [],
+    []
   );
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (!data.length) {
-  //       setIsLoading(true);
-  //     } else {
-  //       setIsRefetching(true);
-  //     }
-  
-  //     try {
-  //       const response = await axiosPrivate.get<UserApiResponse>('/api/data', {
-  //         params: {
-  //           start: pagination.pageIndex * pagination.pageSize,
-  //           size: pagination.pageSize,
-  //           filters: JSON.stringify(columnFilters ?? []),
-  //           globalFilter: globalFilter ?? '',
-  //           sorting: JSON.stringify(sorting ?? []),
-  //         },
-  //       });
-  //       setData(response.data.data);
-  //       setRowCount(response.data.meta.totalRowCount);
-  //     } catch (error) {
-  //       setIsError(true);
-  //       console.error(error);
-  //     } finally {
-  //       setIsError(false);
-  //       setIsLoading(false);
-  //       setIsRefetching(false);
-  //     }
-  //   };
-  
-  //   fetchData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [
-  //   columnFilters, //re-fetch when column filters change
-  //   globalFilter, //re-fetch when global filter changes
-  //   pagination.pageIndex, //re-fetch when page index changes
-  //   pagination.pageSize, //re-fetch when page size changes
-  //   sorting, //re-fetch when sorting changes
-  // ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!data.length) {
+        setIsLoading(true);
+      } else {
+        setIsRefetching(true);
+      }
+
+      try {
+        const response = await axiosPrivate.get<UserApiResponse>("/role", {
+          params: {
+            start: pagination.pageIndex * pagination.pageSize,
+            size: pagination.pageSize,
+            filters: JSON.stringify(columnFilters ?? []),
+            globalFilter: globalFilter ?? "",
+            sorting: JSON.stringify(sorting ?? []),
+          },
+        });
+        setData(response.data.data);
+        setRowCount(response.data.meta.totalRowCount);
+      } catch (error) {
+        setIsError(true);
+        console.error(error);
+      } finally {
+        setIsError(false);
+        setIsLoading(false);
+        setIsRefetching(false);
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    columnFilters, //re-fetch when column filters change
+    globalFilter, //re-fetch when global filter changes
+    pagination.pageIndex, //re-fetch when page index changes
+    pagination.pageSize, //re-fetch when page size changes
+    sorting, //re-fetch when sorting changes
+  ]);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -131,35 +131,35 @@ const Orders = () => {
   const columns = useMemo<MRT_ColumnDef<User>[]>(
     () => [
       {
-        accessorKey: 'firstName',
-        header: 'First Name',
+        accessorKey: "name",
+        header: "Role Name",
       },
       //column definitions...
       {
-        accessorKey: 'lastName',
-        header: 'Last Name',
+        accessorKey: "createdAt",
+        header: "Created at",
       },
-      {
-        accessorKey: 'address',
-        header: 'Address',
-      },
-      {
-        accessorKey: 'state',
-        header: 'State',
-      },
-      {
-        accessorKey: 'phoneNumber',
-        header: 'Phone Number',
-      },
+      // {
+      //   accessorKey: 'address',
+      //   header: 'Address',
+      // },
+      // {
+      //   accessorKey: 'state',
+      //   header: 'State',
+      // },
+      // {
+      //   accessorKey: 'phoneNumber',
+      //   header: 'Phone Number',
+      // },
       //end
     ],
-    [],
+    []
   );
 
   const table = useMaterialReactTable({
     columns,
     data,
-    enableRowSelection: true,
+    // enableRowSelection: true,
     getRowId: (row) => row.phoneNumber,
     initialState: { showColumnFilters: true },
     manualFiltering: true,
@@ -167,8 +167,8 @@ const Orders = () => {
     manualSorting: true,
     muiToolbarAlertBannerProps: isError
       ? {
-          color: 'error',
-          children: 'Error loading data',
+          color: "error",
+          children: "Error loading data",
         }
       : undefined,
     onColumnFiltersChange: setColumnFilters,
@@ -190,10 +190,4 @@ const Orders = () => {
   return <MaterialReactTable table={table} />;
 };
 
-export default Orders;
-
-
-
-
-
-
+export default Roles;

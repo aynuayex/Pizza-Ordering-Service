@@ -1,5 +1,90 @@
 const prisma = require("../config/prisma");
 
+// const handleGetAllRoles = async (req, res) => {
+//   try {
+//     const allRoles = await prisma.role.findMany();
+//     console.log(allRoles);
+//     res.status(200).json({ allRoles });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// }
+
+const handleGetAllRoles = async (req, res) => {
+  try {
+    // Extract query parameters
+    const { start = 0, size = 10, filters = "[]", globalFilter = "", sorting = "[]" } = req.query;
+
+    // Parse filters and sorting (they are passed as JSON strings)
+    const parsedFilters = JSON.parse(filters);
+    const parsedSorting = JSON.parse(sorting);
+
+    // Build where clause for filtering
+    const where = {
+      AND: [
+        globalFilter
+          ? {
+              OR: [
+                { name: { contains: globalFilter, mode: "insensitive" } }, // Example: global filter on role name
+              ],
+            }
+          : {}, // No global filter if empty
+        ...parsedFilters.map(filter => ({
+          [filter.id]: { contains: filter.value, mode: "insensitive" }, // Example filter for string fields
+        })),
+      ],
+    };
+
+    // Build orderBy clause for sorting
+    const orderBy = parsedSorting.length
+      ? parsedSorting.map(sort => ({ [sort.id]: sort.desc ? "desc" : "asc" }))
+      : [{ createdAt: "asc" }]; // Default sorting if none is provided
+
+    // Fetch data from Prisma
+    const roles = await prisma.role.findMany({
+      skip: parseInt(start, 10), // for pagination
+      take: parseInt(size, 10),  // for pagination
+      where,                     // filtering
+      orderBy,                   // sorting
+    });
+
+    // Fetch total row count for pagination purposes
+    const totalRowCount = await prisma.role.count({
+      where,
+    });
+
+    // Return the data and the meta information
+    res.status(200).json({
+      data: roles,
+      meta: {
+        totalRowCount,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const handleBookUpload = async (req, res) => {
   try {
     console.log(req.body);
@@ -195,8 +280,10 @@ const handleBookDelete = async (req, res, next) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 module.exports = {
+  handleGetAllRoles,
+
+
   handleBookUpload,
   handleGetAllBooks,
   handleGetAvailableBooks,

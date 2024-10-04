@@ -2,6 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import {
   MaterialReactTable,
   useMaterialReactTable,
+  MRT_ToggleDensePaddingButton,
+  MRT_ToggleFullScreenButton,
+  MRT_ShowHideColumnsButton,
+  MRT_ToggleFiltersButton,
+  MRT_GlobalFilterTextField,
   type MRT_ColumnDef,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
@@ -9,6 +14,8 @@ import {
 } from "material-react-table";
 
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { Box, Button } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 
 type UserApiResponse = {
   data: Array<User>;
@@ -159,9 +166,123 @@ const Roles = () => {
   const table = useMaterialReactTable({
     columns,
     data,
+    enableColumnActions: false,
+    // enableColumnFilters: false,
+    enableSorting: false,
+    enablePagination: false,
+// enableGlobalFilter: true,
+
+    initialState: { showColumnFilters: false, showGlobalFilter: true,},
+
+    //add custom action buttons to top-left of top toolbar
+    renderTopToolbarCustomActions: () => (
+      <Button
+        sx={{
+          bgcolor: "#FF8100",
+          textTransform: "none",
+          width: "105px",
+          height: "34px",
+          padding: "5px 20px 5px 20px",
+          borderRadius: "5px",
+        }}
+        onClick={() => {
+          alert("Create New Account");
+        }}
+        variant="contained"
+      >
+        Add Role
+      </Button>
+    ),
+    //customize built-in buttons in the top-right of top toolbar
+    renderToolbarInternalActions: ({ table }) => (
+      <Box>
+        {/* add custom button to print table  */}
+        {/* <IconButton
+          onClick={() => {
+            window.print();
+          }}
+        >
+          <PrintIcon />
+        </IconButton> */}
+        {/* along-side built-in buttons in whatever order you want them */}
+        {/* <MRT_GlobalFilterTextField  table={table} /> */}
+        <MRT_ToggleFiltersButton table={table} />
+        <MRT_ShowHideColumnsButton table={table} />
+        <MRT_ToggleDensePaddingButton table={table} />
+        <MRT_ToggleFullScreenButton table={table} />
+      </Box>
+    ),
+
+    defaultColumn: {
+    minSize: 20, //allow columns to get smaller than default
+    maxSize: 90, //allow columns to get larger than default
+    size: 30, //make columns wider by default
+  },
+
+  muiTablePaperProps: {
+    elevation: 0, //change the mui box shadow
+    //customize paper styles
+    sx: {
+      // boxSizing: "border-box",
+      // borderRadius: '0',
+        padding: "49px 44px 194px 45px",
+
+      // border: '1px dashed #0000001F',
+    },
+  },
+
+    muiTableBodyRowProps: { hover: false },
+    muiTableProps: {
+      sx: {
+        // width: "100%",
+        // margin: "49px 44px 194px 45px",
+        border: "1px solid #0000001F",
+        borderBottom: "none",
+        borderBottomLeftRadius: "4px",
+        borderBottomRightRadius: "4px",
+        // border: '1px solid rgba(81, 81, 81, .5)',
+        // caption: {
+          //   captionSide: "top",
+          // },
+        },
+      },
+      muiTopToolbarProps: {
+        sx: {
+        border: "1px solid #0000001F",
+        borderBottom: "none",
+        borderRadius: "4px",
+        borderBottomLeftRadius: "0px",
+        borderBottomRightRadius: "0px",
+      }
+    },
+    muiTableHeadCellProps: {
+      sx: {
+        // border: "1px solid #0000001F",
+        // border: '1px solid rgba(81, 81, 81, .5)',
+        bgcolor: "#F6F6F6",
+        // backgroundClip: "padding-box",
+        // fontStyle: "italic",
+        // fontWeight: "normal",
+      },
+    },
+    muiPaginationProps: {
+      sx: {
+        // boxShadow: "none",
+        boxShadow: "0 1px 2px -1px #FFF inset",
+        height: 0,
+        elevation: "none"
+      }
+    },
+    // muiTableBodyCellProps: {
+    //   sx: {
+    //     border: "1px solid #0000001F",
+    //     // border: '1px solid rgba(81, 81, 81, .5)',
+    //   },
+    // },
     // enableRowSelection: true,
+    
     getRowId: (row) => row.phoneNumber,
-    initialState: { showColumnFilters: true },
+    // initialState: { showColumnFilters: false, showGlobalFilter: true,},
     manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
@@ -187,7 +308,19 @@ const Roles = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    // <Box
+    //   sx={{
+    //     //       width: 1142px,
+    //     // height: "483px",
+    //     // padding: "49px 44px 194px 45px",
+    //     // border-radius: 5px 0px 0px 0px;
+    //     // opacity: 0px;
+    //   }}
+    // >
+      <MaterialReactTable table={table} />
+    // </Box>
+  );
 };
 
 export default Roles;

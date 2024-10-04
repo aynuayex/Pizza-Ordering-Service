@@ -25,33 +25,37 @@ const router = createBrowserRouter(
     <Route>
       <Route path="/sign-up" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />
-      <Route path="/order" element={<Order />} />
-
-      <Route path="/dashboard" element={<RegisterRestaurant />} />
-      <Route path="/add_admin" element={<AddAdmin />} />
-
-      <Route path="/dashboard/layout" element={<DashboardLayout />}>
-        <Route path="order" element={<Orders />} />
-        {/* <Route index path="orders" element={<Orders />} /> */}
-        <Route path="menu" element={<Menus />} />
-        <Route path="role" element={<Roles />} />
-        <Route path="user" element={<Users />} />
-      </Route>
-      {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-      <Route path="/" element={<RootLayout />}>
-        <Route index element={<Home />} />
-        <Route path="order_history" element={<OrderHistory />} />
-        {/* <Route element={<PersistLogin />}>
+      <Route element={<PersistLogin />}>
         <Route element={<RequireAuth />}>
-          {/* <Route path="/" element={<App />}> */}
-        {/* 
-            <Route path="books" element={<Books />} />
-            <Route path="owners" element={<Owners />} />
-            <Route path="book_upload" element={<BookUpload />} />
-            <Route path="book_upload" element={<BookUpload2 />} /> */}
-        {/* </Route> */}
-        {/* </Route>
-        </Route> */}
+          <Route path="/order" element={<Order />} />
+
+          <Route path="/dashboard" element={<RegisterRestaurant />} />
+          <Route path="/add_admin" element={<AddAdmin />} />
+
+          <Route path="/dashboard/layout" element={<DashboardLayout />}>
+            <Route path="order" element={<Orders />} />
+            {/* <Route index path="orders" element={<Orders />} /> */}
+            <Route path="menu" element={<Menus />} />
+            <Route path="role" element={<Roles />} />
+            <Route path="user" element={<Users />} />
+          </Route>
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route path="/" element={<RootLayout />}>
+            <Route index element={<Home />} />
+            <Route path="order_history" element={<OrderHistory />} />
+            {/* <Route element={<PersistLogin />}>
+          <Route element={<RequireAuth />}>
+            {/* <Route path="/" element={<App />}> */}
+              {/* 
+              <Route path="books" element={<Books />} />
+              <Route path="owners" element={<Owners />} />
+              <Route path="book_upload" element={<BookUpload />} />
+              <Route path="book_upload" element={<BookUpload2 />} /> */}
+              {/* </Route> */}
+              {/* </Route>
+          /Route> */}
+          </Route>
+        </Route>
       </Route>
     </Route>
   )

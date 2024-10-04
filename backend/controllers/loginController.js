@@ -65,7 +65,7 @@ const handleLogin = async (req, res) => {
         data: { refreshToken: [...newRefreshTokenArray, newRefreshToken] },
       });
       console.log(result);
-console.log("hi")
+
       res.cookie("jwt", newRefreshToken, {
         httpOnly: true,
         sameSite: "None",

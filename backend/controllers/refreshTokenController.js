@@ -19,9 +19,9 @@ const handleRefreshToken = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       async (err, decoded) => {
         if (err) return res.sendStatus(403); //forbidden(expired)
-        const {fullName, email, role} = decoded.userInfo;
+        const {fullName, email} = decoded.userInfo;
         const hackedUser = await prisma.user.update({
-          where: {fullName, email, role},data: {
+          where: {fullName, email},data: {
             refreshToken: []
           }
         });
@@ -40,9 +40,9 @@ const handleRefreshToken = async (req, res) => {
     async (err, decoded) => {
       if(err){
         //forbidden(expired)
-        const {fullName, email, role} = foundUser;
+        const {fullName, email} = foundUser;
         const expiredTokenUser = await prisma.user.update({
-          where: {fullName, email, role},data: {
+          where: {fullName, email},data: {
             refreshToken: [...newRefreshTokenArray]
           }
         });
@@ -67,7 +67,7 @@ const handleRefreshToken = async (req, res) => {
       );
 
       // Saving newRefreshToken with current user
-      const result = await prisma.user.update({where: {fullName, email, role}, data: {refreshToken: [...newRefreshTokenArray, newRefreshToken]}})
+      const result = await prisma.user.update({where: {fullName, email}, data: {refreshToken: [...newRefreshTokenArray, newRefreshToken]}})
       console.log(result);
 
       res.cookie("jwt", newRefreshToken, {

@@ -14,10 +14,16 @@ import {
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControlLabel,
   IconButton,
+  MenuItem,
   Switch,
+  TextField,
   Tooltip,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -32,6 +38,9 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 import fileDownload from "@/assets/fileDownload.svg";
 import Toast from "@/components/Toast";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { addAdminSchema, AddAdminSchema } from "@/schema/addAdminSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type UserApiResponse = {
   data: Array<User>;
@@ -65,6 +74,7 @@ const csvConfig = mkConfig({
 });
 
 const Users = () => {
+  const [openFormDialog, setOpenFormDialog] = useState(false);
   const [showGlobalFilter, setShowGlobalFilter] = useState(false);
   //manage our own state for stuff we want to pass to the API
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
@@ -118,16 +128,15 @@ const Users = () => {
         header: "User Name",
         Cell: ({ row }) => (
           <span>
-            {row
-              .original.fullName && row
-              .original.fullName
-              .split(" ")
-              .map((word) => {
-                return (
-                  word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-                );
-              })
-              .join(" ")}
+            {row.original.fullName &&
+              row.original.fullName
+                .split(" ")
+                .map((word) => {
+                  return (
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                  );
+                })
+                .join(" ")}
           </span>
         ),
       },
@@ -143,7 +152,7 @@ const Users = () => {
     []
   );
 
-// const updatedrole = useMutation({
+  // const updatedrole = useMutation({
   //   mutationKey: ['UPDATE_ROLE_ACTIVE_STATUS'],
   //   mutationFn: async (id: string, isChecked: boolean) => {
   //     const response = await axiosPrivate.put("/role",{id, isChecked});
@@ -189,6 +198,56 @@ const Users = () => {
         refetch();
       }
     } catch (err: any) {
+      <Toast
+        message={`operation error ${err.response.data}`}
+        severity="error"
+      />;
+    }
+  };
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    setValue,
+    control,
+  } = useForm<AddAdminSchema>({
+    resolver: zodResolver(addAdminSchema),
+    defaultValues: {
+      adminName: "",
+      email: "",
+      phoneNumber: "",
+      location: "",
+      password: "",
+      // permissions: permissions.map((item) => ({
+      //   label: item.label,
+      //   permission: item.permission,
+      //   checked: item.label === "Create Roles" ? false : true, // default state
+      // })),
+    },
+  });
+
+  const onSubmit: SubmitHandler<AddAdminSchema> = async (data) => {
+    try {
+      // setOpen(true);
+      // console.log({ data });
+      // let response;
+      // if (roleAction === "Create") {
+      //   response = await axiosPrivate.post("/role", {
+      //     roleName: data.roleName,
+      //     permissions: JSON.stringify(data.permissions),
+      //   });
+      // }
+      // response = await axiosPrivate.patch("/role", {
+      //   roleName: data.roleName,
+      //   permissions: JSON.stringify(data.permissions),
+      // });
+      // console.log({ responseData: response.data });
+      // <Toast
+      //   message={`role successfully ${roleAction}!`}
+      //   severity="success"
+      // />;
+    } catch (err: any) {
+      console.error(err);
       <Toast
         message={`operation error ${err.response.data}`}
         severity="error"
@@ -263,15 +322,15 @@ const Users = () => {
                     height: "9px",
                     borderRadius: "40px",
                     mt: "2px",
-                    color: row.original.active
-                      ? "success.main"
-                      : "error.main",
+                    color: row.original.active ? "success.main" : "error.main",
                   },
                   "& .MuiSwitch-track": {
                     width: "18px",
                     height: "7px",
                     // bgcolor: "error.light",
-                    bgcolor: row.original.active ? "success.light !important" : "error.light",
+                    bgcolor: row.original.active
+                      ? "success.light !important"
+                      : "error.light",
                   },
                   "& .Mui-checked+.MuiSwitch-track": {
                     bgcolor: "success.light",
@@ -309,9 +368,7 @@ const Users = () => {
           padding: "5px 20px 5px 20px",
           borderRadius: "5px",
         }}
-        onClick={() => {
-          alert("Create New Account");
-        }}
+        onClick={() => setOpenFormDialog(true)}
         variant="contained"
       >
         Add User
@@ -458,7 +515,204 @@ const Users = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <>
+      <MaterialReactTable table={table} />;
+      <Dialog
+        component={"form"}
+        onSubmit={handleSubmit(onSubmit)}
+        PaperProps={{
+          sx: {
+            // padding: 50px 0px 0px 0px;
+            // gap: 20px;
+
+            width: "654px",
+            height: "584px",
+            paddingX: "50px",
+
+            borderRadius: "20px",
+          },
+        }}
+        open={openFormDialog}
+        onClose={() => setOpenFormDialog(false)}
+        aria-labelledby="dialog-title"
+      >
+        <DialogTitle id="dialog-title" textAlign={"center"}>
+          Add User
+        </DialogTitle>
+        <DialogContent>
+          <Controller
+            name="adminName"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                autoFocus
+                required
+                fullWidth
+                margin="dense"
+                {...field}
+                label="Admin Name"
+                type="text"
+                disabled={isSubmitting}
+                error={!!errors.adminName}
+                helperText={errors.adminName?.message}
+              />
+            )}
+          />
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                required
+                fullWidth
+                margin="dense"
+                {...field}
+                label="Email"
+                type="text"
+                disabled={isSubmitting}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+            )}
+          />
+          <Controller
+            name="phoneNumber"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                required
+                fullWidth
+                margin="dense"
+                {...field}
+                label="Phone Number"
+                type="text"
+                disabled={isSubmitting}
+                error={!!errors.phoneNumber}
+                helperText={errors.phoneNumber?.message}
+              />
+            )}
+          />
+          <Controller
+            name="location"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                required
+                fullWidth
+                margin="dense"
+                {...field}
+                label="Location"
+                type="text"
+                disabled={isSubmitting}
+                error={!!errors.location}
+                helperText={errors.location?.message}
+              />
+            )}
+          />
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                required
+                fullWidth
+                margin="dense"
+                {...field}
+                label="Password"
+                type="text"
+                disabled={isSubmitting}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+            )}
+          />
+          <Controller
+            name="role"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                select
+                required
+                margin="dense"
+                {...field}
+                // value={formData.category}
+                // onChange={handleInputChange}
+                label="Select Role"
+                disabled={isSubmitting}
+                error={!!errors.role}
+                helperText={errors.role?.message}
+                // fullWidth
+                // variant="filled"
+              >
+                <MenuItem value="FICTION">Fiction</MenuItem>
+                <MenuItem value="SELF_HELP">Self Help</MenuItem>
+                <MenuItem value="BUSINESS">Business</MenuItem>
+              </TextField>
+            )}
+          />
+
+          <Button
+            variant="contained"
+            // fullWidth
+            autoFocus
+            sx={{ textTransform: "none", m: 2, bgcolor: "primary.light" }}
+            onClick={() => setOpenFormDialog(false)}
+          >
+            Add
+          </Button>
+
+          {/* <TextField
+            autoFocus
+            required
+            margin="dense"
+            name="book"
+            value={formData.book}
+            onChange={handleInputChange}
+            label="Book Name"
+            fullWidth
+            variant="filled"
+          />
+          <TextField
+            required
+            margin="dense"
+            name="author"
+            value={formData.author}
+            onChange={handleInputChange}
+            label="Author Name"
+            fullWidth
+            variant="filled"
+          /> */}
+          {/* <TextField
+            select
+            required
+            margin="dense"
+            name="category"
+            value={formData.category}
+            onChange={handleInputChange}
+            label="Category"
+            fullWidth
+            variant="filled"
+          >
+            <MenuItem value="FICTION">Fiction</MenuItem>
+            <MenuItem value="SELF_HELP">Self Help</MenuItem>
+            <MenuItem value="BUSINESS">Business</MenuItem>
+          </TextField> */}
+        </DialogContent>
+        {/* <DialogActions>
+          <Button
+            variant="contained"
+            fullWidth
+            autoFocus
+            sx={{ textTransform: "none", m: 2, bgcolor: "primary.light" }}
+            onClick={() => setOpenFormDialog(false)}
+          >
+            Add
+          </Button>
+        </DialogActions> */}
+      </Dialog>
+    </>
+  );
 };
 
 export default Users;

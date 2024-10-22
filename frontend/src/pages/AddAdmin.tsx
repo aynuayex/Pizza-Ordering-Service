@@ -51,7 +51,7 @@ function AddAdmin() {
       email: "",
       phoneNumber: "",
       password: "",
-      confirmPassword: "",
+      // confirmPassword: "",
     },
   });
 
@@ -274,7 +274,7 @@ function AddAdmin() {
             )}
           />
 
-          <Controller
+          {/* <Controller
             name="confirmPassword"
             control={control}
             render={({ field }) => (
@@ -307,7 +307,7 @@ function AddAdmin() {
                 }}
               />
             )}
-          />
+          /> */}
 
           <LoadingButton size="large"
             sx={{

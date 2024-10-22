@@ -8,7 +8,8 @@ const handleNewUser = async (
   password,
   location,
   phoneNumber,
-  role
+  role,
+  createToken = true
 ) => {
   try {
     // console.log(req.body);
@@ -29,17 +30,22 @@ const handleNewUser = async (
     // encrypt password
     const hashedPwd = await bcrypt.hash(password, 10);
 
+    let accessToken;
+    let refreshToken;
+
     // create JWTs
-    const accessToken = jwt.sign(
-      { userInfo: { fullName, email, role } },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1h" }
-    );
-    const refreshToken = jwt.sign(
-      { userInfo: { fullName, email, role } },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" }
-    );
+    if (createToken) {
+      accessToken = jwt.sign(
+        { userInfo: { fullName, email, role } },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "1h" }
+      );
+      refreshToken = jwt.sign(
+        { userInfo: { fullName, email, role } },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: "1d" }
+      );
+    }
 
     // create and store the new user
     const result = await prisma.user.create({
@@ -73,8 +79,16 @@ const handleNewUser = async (
 const handleRegisterRestaurant = async (req, res) => {
   try {
     console.log(req.body);
-    const { adminName, email, password, confirmPassword, phoneNumber, restaurantName, location,termsAndConditions } =
-      req.body;
+    const {
+      adminName,
+      email,
+      password,
+      confirmPassword,
+      phoneNumber,
+      restaurantName,
+      location,
+      termsAndConditions,
+    } = req.body;
     if (
       !adminName ||
       !email ||
@@ -140,7 +154,8 @@ const handleRegisterRestaurant = async (req, res) => {
       password,
       location,
       phoneNumber,
-      superAdminRole
+      superAdminRole,
+      createToken
     );
     // Create Super Admin user
     // const superAdmin = await prisma.user.create({
@@ -154,8 +169,8 @@ const handleRegisterRestaurant = async (req, res) => {
     //   },
     // });
 
-    // Optional: Create Restaurant associated with Super Admin
-    const restaurant = await prisma.restaurant.create({
+    //Create Restaurant associated with Super Admin
+    await prisma.restaurant.create({
       data: {
         name: restaurantName,
         users: {
@@ -171,16 +186,14 @@ const handleRegisterRestaurant = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res
-      .status(201)
-      .json({
-        success: `Super Admin with a name ${adminName} created and restaurant with name ${restaurantName} registered!`,
-        id,
-        email,
-        adminName,
-        role: superAdminRole,
-        accessToken,
-      });
+    res.status(201).json({
+      success: `Super Admin with a name ${adminName} created and restaurant with name ${restaurantName} registered!`,
+      id,
+      email,
+      adminName,
+      role: superAdminRole,
+      accessToken,
+    });
 
     // res.json({
     //   message: "Super Admin created and restaurant registered",
@@ -238,7 +251,8 @@ const handleRegisterCustomer = async (req, res) => {
       password,
       location,
       phoneNumber,
-      customerRole
+      customerRole,
+      createToken
     );
     // Create customer user
     // const customer = await prisma.user.create({
@@ -258,16 +272,14 @@ const handleRegisterCustomer = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res
-      .status(201)
-      .json({
-        success: `New user ${fullName} created!`,
-        id,
-        email,
-        fullName,
-        role: customerRole,
-        accessToken,
-      });
+    res.status(201).json({
+      success: `New user ${fullName} created!`,
+      id,
+      email,
+      fullName,
+      role: customerRole,
+      accessToken,
+    });
 
     // res.json({ message: "Customer registered successfully", customer });
   } catch (err) {
@@ -289,8 +301,7 @@ const handleAddAdmin = async (req, res) => {
       password,
       location,
       phoneNumber,
-      roleName,
-      permissions,
+      roleId
     } = req.body;
     if (
       !fullName ||
@@ -298,12 +309,11 @@ const handleAddAdmin = async (req, res) => {
       !password ||
       !location ||
       !phoneNumber ||
-      !roleName ||
-      !permissions
+      !roleId
     ) {
       return res.status(400).json({
         message:
-          "full Name, email, password, location, phoneNumber, roleName and permissions are required!",
+          "full Name, email, password, location, phoneNumber, roleId are required!",
       });
     }
     const duplicate = await prisma.user.findUnique({
@@ -317,37 +327,30 @@ const handleAddAdmin = async (req, res) => {
 
     // const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Check if role with `roleName` already exists, otherwise create it
-    let adminRole = await prisma.role.findUnique({ where: { name: roleName } });
-    if (!adminRole) {
-      adminRole = await prisma.role.create({
-        data: {
-          name: roleName,
-          description: `${roleName} role`,
-          permissions: JSON.stringify(permissions), // Expect permissions in JSON format
-        },
-      });
-    }
+    const adminRole = await prisma.role.findUnique({ where: { id: roleId } });
+
     const { accessToken, refreshToken, id } = await handleNewUser(
       fullName,
       email,
       password,
       location,
       phoneNumber,
-      adminRole
+      adminRole,
+      (createToken = false)
     );
 
-    // Create Admin user and assign the custom role
-    // const admin = await prisma.user.create({
-    //   data: {
-    //     name,
-    //     email,
-    //     password: hashedPassword,
-    //     role: {
-    //       connect: { id: adminRole.id },
-    //     },
-    //   },
-    // });
+    const assigningUser = await prisma.restaurant.findUnique({where: {email: req.user.email}});
+
+    //connect the admin with the associated Restaurant
+    await prisma.restaurant.update({
+      where: {id: assigningUser.restaurantId},
+      data: {
+        users: {
+          connect: { id },
+        },
+      },
+    });
+
     res.status(201).json({
       success: `New user ${fullName} with role ${adminRole.name} created!`,
       // , id, email, fullName, role: adminRole, accessToken

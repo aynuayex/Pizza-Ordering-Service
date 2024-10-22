@@ -67,7 +67,7 @@ model Restaurant {
 model Pizza {
   id          String   @id @default(uuid())
   name        String
-  description String
+  description String?
   toppings    String[]
   price       Float
 
@@ -81,13 +81,15 @@ model Pizza {
 // Order model (customer order)
 model Order {
   id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      String  @default("Preparing")
+  quantity    Int
   totalAmount Float
-
+  toppings    String[]
   customer   User   @relation(fields: [customerId], references: [id])
   customerId String
 
-  pizzas Pizza[]
-  // pizzas Pizza[] @relation(references: [id]) // Order can have multiple pizzas
+  pizza      Pizza  @relation(fields: [pizzaId], references: [id]) 
+  pizzaId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

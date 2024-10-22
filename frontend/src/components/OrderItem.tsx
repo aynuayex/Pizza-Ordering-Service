@@ -3,8 +3,10 @@ import { Box, Button, Divider, Typography } from "@mui/material";
 import female from "@/assets/female.svg";
 import pizza_slice_egg_full from "@/assets/pizza_slice_egg_full.png";
 import { useNavigate } from "react-router-dom";
+import { PopularPizzasApiResponse } from "./PopularPizzas";
+import { FastingPizzasApiResponse } from "./Fasting";
 
-const OrderItem = () => {
+const OrderItem = ({pizza}: {pizza: PopularPizzasApiResponse | FastingPizzasApiResponse}) => {
   const navigate = useNavigate();
   return (
     <Box
@@ -71,7 +73,7 @@ const OrderItem = () => {
               color: "#000000",
             }}
           >
-            Margherita
+            {pizza?.name}
           </Typography>
           <Typography
             sx={{
@@ -130,7 +132,7 @@ const OrderItem = () => {
               </Typography>
             </Box>
             <Button
-              onClick={() => navigate("/order")}
+              onClick={() => navigate("/order", {state: {pizza}})}
               variant="contained"
               sx={{
                 width: "188px",

@@ -64,13 +64,17 @@ app.use(
   require("./routes/role") 
 );
 app.use(
-  "/owners", verifyJWT,
-  require("./routes/owner") 
+  "/user", verifyJWT,
+  require("./routes/user") 
 );
 
-app.use("/earn", verifyJWT,
-  require("./routes/earn")
+app.use("/menu", verifyJWT,
+  require("./routes/menu")
 )
+app.use("/order", verifyJWT,
+  require("./routes/order")
+)
+
 // default(404)
 app.all("*", (req, res) => {
   res.status(404).json({ error: "404 Not Found!" });

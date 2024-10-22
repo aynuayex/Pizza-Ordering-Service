@@ -13,4 +13,4 @@ const verfiyJWT = (req, res, next) => {
   });
 };
 
-module.exports = verfiyJWT;
+module.exports = verfiyJWT; 

@@ -17,7 +17,7 @@ import { useState } from "react";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { addOrderSchema, AddOrderSchema } from "@/schema/addOrderSchema";
+import { addMenuSchema, AddMenuSchema } from "@/schema/addMenuSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Modal from "@/components/Modal";
 
@@ -39,8 +39,8 @@ const Menus = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
     control,
-  } = useForm<AddOrderSchema>({
-    resolver: zodResolver(addOrderSchema),
+  } = useForm<AddMenuSchema>({
+    resolver: zodResolver(addMenuSchema),
     defaultValues: {
       name: "",
       // price: 0,
@@ -59,24 +59,25 @@ const Menus = () => {
     setOpenSnackBar(false);
   };
 
-  const onSubmit: SubmitHandler<AddOrderSchema> = async (data) => {
+  const onSubmit: SubmitHandler<AddMenuSchema> = async (data) => {
     try {
-      setOpen(true);
       console.log(data);
-      // const response = await axiosPrivate.post("/books/upload", {
-      //   ...data,
-      // });
-      // if (response.status === 201) {
-      // }
-      // console.log(response);
+      const response = await axiosPrivate.post("/menu/add_pizza", {
+        ...data,
+        toppings: JSON.stringify(data.toppings)
+      });
+      if (response.status === 201) {
+        setOpen(true);
+      }
+      console.log(response);
     } catch (err: any) {
       console.error(err);
-      // if (err?.response?.status === 409) {
-      //   setOpenSnackBar(true);
-      //   setMessage(
-      //     "The book already exists, please edit on the dashboard or create a new one!"
-      //   );
-      // }
+      if (err?.response?.status === 409) {
+        setOpenSnackBar(true);
+        setMessage( err.response.data
+          // "The pizza already exists, please edit on the dashboard or create a new one!"
+        );
+      }
     }
   };
 

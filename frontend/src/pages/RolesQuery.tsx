@@ -11,14 +11,24 @@ import {
   type MRT_PaginationState,
   type MRT_SortingState,
 } from "material-react-table";
+import { format, parseISO } from "date-fns";
 import {
   Box,
   Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
   Divider,
+  FormControl,
   FormControlLabel,
+  FormHelperText,
+  Grid,
   IconButton,
   Switch,
+  TextField,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -27,35 +37,31 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 import { mkConfig, generateCsv, download } from "export-to-csv";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 import fileDownload from "@/assets/fileDownload.svg";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { roleSchema, RoleSchema } from "@/schema/roleSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Toast from "@/components/Toast";
 
-type UserApiResponse = {
-  data: Array<User>;
+type RoleApiResponse = {
+  data: Array<Role>;
   meta: {
     totalRowCount: number;
   };
 };
 
-type User = {
+type Role = {
   id: string;
-  fullName: string;
-  email: string;
-  password: string;
-  location: string;
-  phoneNumber: string;
-  refreshToken: string;
-  // please check here to make the value to be stringified before sending
-  //  as a json resp, otherwise error with exporting to csv
-  // refreshToken: string[];
+  name: string;
+  description: string;
   active: boolean;
-  roleId: string;
+  permissions: string; // CASL abilities in JSON format
+  // permissions: {action: string, subject: string}[]; // CASL abilities in JSON format
   createdAt: string;
   updatedAt: string;
-  restaurantId: string;
 };
 
 const csvConfig = mkConfig({
@@ -64,7 +70,31 @@ const csvConfig = mkConfig({
   useKeysAsHeaders: true,
 });
 
-const Users = () => {
+const permissions = [
+  // { name: "update_order_status", label: "Update Order Status" },
+  // { name: "see_customers", label: "See Customers" },
+  // { name: "see_orders", label: "See Orders" },
+  // { name: "create_roles", label: "Create Roles" },
+  // { name: "add_users", label: "Add Users" },
+  {
+    permission: [{ action: "update", subject: "Order Status" }],
+    label: "Update Order Status",
+  },
+  {
+    permission: [{ action: "read", subject: "Customers" }],
+    label: "See Customers",
+  },
+  { permission: [{ action: "read", subject: "Orders" }], label: "See Orders" },
+  {
+    permission: [{ action: "create", subject: "Roles" }],
+    label: "Create Roles",
+  },
+  { permission: [{ action: "create", subject: "Users" }], label: "Add Users" },
+];
+
+const Roles = () => {
+  const [roleAction, setRoleAction] = useState("Create");
+  const [openDialog, setOpenDialog] = useState(false);
   const [showGlobalFilter, setShowGlobalFilter] = useState(false);
   //manage our own state for stuff we want to pass to the API
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
@@ -86,7 +116,7 @@ const Users = () => {
     isRefetching,
     isLoading,
     refetch,
-  } = useQuery<UserApiResponse>({
+  } = useQuery<RoleApiResponse>({
     queryKey: [
       "table-data",
       columnFilters, //refetch when columnFilters changes
@@ -96,7 +126,7 @@ const Users = () => {
       sorting, //refetch when sorting changes
     ],
     queryFn: async () => {
-      const response = await axiosPrivate.get<UserApiResponse>("/user", {
+      const response = await axiosPrivate.get<RoleApiResponse>("/role", {
         params: {
           start: pagination.pageIndex * pagination.pageSize,
           size: pagination.pageSize,
@@ -111,39 +141,37 @@ const Users = () => {
   });
 
   console.log({ data });
-  const columns = useMemo<MRT_ColumnDef<User>[]>(
+  const columns = useMemo<MRT_ColumnDef<Role>[]>(
     () => [
       {
-        accessorKey: "fullName",
-        header: "User Name",
+        accessorKey: "name",
+        header: "Role Name",
         Cell: ({ row }) => (
           <span>
-            {row
-              .original.fullName && row
-              .original.fullName
-              .split(" ")
-              .map((word) => {
-                return (
-                  word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-                );
-              })
-              .join(" ")}
+            {row.original.name &&
+              row.original.name
+                .split("_")
+                .map((word) => {
+                  return (
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                  );
+                })
+                .join(" ")}
           </span>
         ),
       },
       {
-        accessorKey: "phoneNumber",
-        header: "Phone No",
-      },
-      {
-        accessorKey: "email",
-        header: "Email",
+        accessorKey: "createdAt",
+        header: "Created at",
+        Cell: ({ cell }) =>
+          format(parseISO(cell.getValue<string>()), "d/MM/yy"),
       },
     ],
     []
+    //end
   );
 
-// const updatedrole = useMutation({
+  // const updatedrole = useMutation({
   //   mutationKey: ['UPDATE_ROLE_ACTIVE_STATUS'],
   //   mutationFn: async (id: string, isChecked: boolean) => {
   //     const response = await axiosPrivate.put("/role",{id, isChecked});
@@ -158,9 +186,12 @@ const Users = () => {
   //     <Toast message={`operation error ${error.message}`} severity="error" />
   //   },
   // });
-  const handleChange = async (id: string, isChecked: boolean) => {
+  const handleRoleStatusChange = async (id: string, isChecked: boolean) => {
     try {
-      const response = await axiosPrivate.put("/user", { id, isChecked });
+      const response = await axiosPrivate.patch("/role/status", {
+        id,
+        isChecked,
+      });
       if (response.status === 200) {
         <Toast
           message={`role successfully ${
@@ -181,14 +212,81 @@ const Users = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleRoleDelete = async (id: string) => {
     try {
-      const response = await axiosPrivate.delete("/user", { data: { id } });
+      const response = await axiosPrivate.delete("/role", { data: { id } });
       if (response.status === 200) {
         <Toast message={`role successfully deleted`} severity="success" />;
         refetch();
       }
     } catch (err: any) {
+      console.log({ err: err.response.data.message });
+      <Toast
+        message={`operation error ${err.response.data.message}`}
+        severity="error"
+      />;
+    }
+  };
+
+  const handleRoleUpdate = async (id: string) => {
+    setRoleAction("Update");
+    const role = data.filter((role) => role.id === id)[0];
+
+    const roleName = role.name;
+    const description = role.description;
+
+    setValue("roleName", roleName);
+    setValue(
+      "permissions",
+      permissions.map((item) => ({
+        label: item.label,
+        permission: item.permission,
+        checked: description.split(", ").includes(item.label) ? true : false, // default state
+      }))
+    );
+    setOpenDialog(true);
+  };
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    setValue,
+    control,
+  } = useForm<RoleSchema>({
+    resolver: zodResolver(roleSchema),
+    defaultValues: {
+      roleName: "",
+      permissions: permissions.map((item) => ({
+        label: item.label,
+        permission: item.permission,
+        checked: item.label === "Create Roles" ? false : true, // default state
+      })),
+    },
+  });
+
+  const onSubmit: SubmitHandler<RoleSchema> = async (data) => {
+    try {
+      // setOpen(true);
+      console.log({ data });
+      let response;
+      if (roleAction === "Create") {
+        response = await axiosPrivate.post("/role", {
+          roleName: data.roleName,
+          permissions: JSON.stringify(data.permissions),
+        });
+      }
+      response = await axiosPrivate.patch("/role", {
+        roleName: data.roleName,
+        permissions: JSON.stringify(data.permissions),
+      });
+      console.log({ responseData: response.data });
+
+      <Toast
+        message={`role successfully ${roleAction}!`}
+        severity="success"
+      />;
+    } catch (err: any) {
+      console.error(err);
       <Toast
         message={`operation error ${err.response.data}`}
         severity="error"
@@ -215,7 +313,7 @@ const Users = () => {
     displayColumnDefOptions: {
       "mrt-row-actions": {
         // header: 'Change Account Settings', //change header text
-        // size: 532, //make actions column wider
+        size: 532, //make actions column wider
       },
     },
     positionActionsColumn: "last",
@@ -228,6 +326,38 @@ const Users = () => {
           gap: "8px",
         }}
       >
+        {/* <Button
+          // fullWidth
+          // add circle here
+          //   startIcon={checked ? <CheckIcon /> : <ClearIcon />}
+          color={row.original.name === "CUSTOMER" ? "error" : "success"}
+          sx={{
+            textTransform: "none",
+            borderRadius: 6,
+            p: 0,
+            // color: row.original.name === "CUSTOMER" ? "#0080001A" : "error",
+            bgcolor: row.original.name === "CUSTOMER" ? "#0080001A" : "error",
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Switch
+                sx={{
+                  '& .MuiSwitch-input': {
+                    color: "error"
+                  }
+                  // color:
+                  //   row.original.name === "CUSTOMER" ? "#0080001A" : "error",
+                }}
+                // checked={checked}
+                // onChange={(event) => handleChange(id, event.target.checked)}
+                color={row.original.name === "CUSTOMER" ? "error" : "success"}
+              />
+            }
+            label={row.original.name === "CUSTOMER" ? "Inactive" : "Active"}
+            labelPlacement="start"
+          />
+        </Button> */}
         <Button
           color="inherit" // Set to inherit to use custom colors from sx
           sx={{
@@ -252,9 +382,9 @@ const Users = () => {
             control={
               <Switch
                 size="small"
-                checked={row.original.active ?? false}
+                checked={row.original.active}
                 onChange={(event) =>
-                  handleChange(row.original.id, event.target.checked)
+                  handleRoleStatusChange(row.original.id, event.target.checked)
                 }
                 sx={{
                   mr: 2,
@@ -263,15 +393,15 @@ const Users = () => {
                     height: "9px",
                     borderRadius: "40px",
                     mt: "2px",
-                    color: row.original.active
-                      ? "success.main"
-                      : "error.main",
+                    color: row.original.active ? "success.main" : "error.main",
                   },
                   "& .MuiSwitch-track": {
                     width: "18px",
                     height: "7px",
                     // bgcolor: "error.light",
-                    bgcolor: row.original.active ? "success.light !important" : "error.light",
+                    bgcolor: row.original.active
+                      ? "success.light "
+                      : "error.light",
                   },
                   "& .Mui-checked+.MuiSwitch-track": {
                     bgcolor: "success.light",
@@ -286,13 +416,13 @@ const Users = () => {
 
         <IconButton
           sx={{ color: "#000000BF" }}
-          onClick={() => console.info("Edit")}
+          onClick={() => handleRoleUpdate(row.original.id)}
         >
           <VisibilityIcon />
         </IconButton>
         <IconButton
           sx={{ color: "#000000BF" }}
-          onClick={() => handleDelete(row.original.id)}
+          onClick={() => handleRoleDelete(row.original.id)}
         >
           <DeleteOutlineIcon />
         </IconButton>
@@ -310,11 +440,13 @@ const Users = () => {
           borderRadius: "5px",
         }}
         onClick={() => {
-          alert("Create New Account");
+          setRoleAction("Create");
+          setValue("roleName", "");
+          setOpenDialog(true);
         }}
         variant="contained"
       >
-        Add User
+        Add Role
       </Button>
     ),
     //customize built-in buttons in the top-right of top toolbar
@@ -458,7 +590,169 @@ const Users = () => {
     },
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <>
+      <MaterialReactTable table={table} />
+
+      <Dialog
+        component={"form"}
+        onSubmit={handleSubmit(onSubmit)}
+        PaperProps={{
+          sx: {
+            width: "505px",
+            height: "461px",
+            padding: "36px 67px 36px 68px",
+
+            borderRadius: "20px",
+          },
+        }}
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+      >
+        <DialogContent>
+          <Box
+            sx={{
+              fontsize: "30px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <Typography
+              gutterBottom
+              sx={{
+                width: "44px",
+                height: "24px",
+                color: "#00000080",
+                textTransform: "none",
+                fontFamily: "Roboto",
+                fontSize: "22px",
+                fontWeight: 400,
+                lineHeight: "24px",
+                letterSpacing: "0.15000000596046448px",
+              }}
+            >
+              Role
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Controller
+                name="roleName"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Role Name"
+                    type="text"
+                    disabled={isSubmitting}
+                    error={!!errors.roleName}
+                    helperText={errors.roleName?.message}
+                  />
+                )}
+              />
+              <Typography
+                sx={{
+                  mt: "20px",
+                  width: "124px",
+                  height: "24px",
+                  fontFamily: "Roboto",
+                  fontSize: "22px",
+                  fontWeight: 400,
+                  lineHeight: "24px",
+                  letterSpacing: "0.15px",
+                  color: "#00000080",
+                }}
+              >
+                Permissions
+              </Typography>
+
+              <Controller
+                name="permissions"
+                control={control}
+                render={({ field: { value = [], onChange } }) => (
+                  <Grid container spacing="5px">
+                    {permissions.map((permission, index) => (
+                      <Grid item xs={6} key={permission.label}>
+                        <FormControl
+                          error={!!errors.permissions?.[index]?.checked}
+                        >
+                          <FormControlLabel
+                            label={permission.label}
+                            control={
+                              <Checkbox
+                                checked={value[index]?.checked || false}
+                                onChange={(e) => {
+                                  let updatedPermissions = [...value];
+                                  updatedPermissions[index] = {
+                                    ...updatedPermissions[index],
+                                    checked: e.target.checked,
+                                  };
+                                  onChange(updatedPermissions);
+                                }}
+                                disabled={isSubmitting}
+                                size="large"
+                                sx={{
+                                  "&.Mui-checked": {
+                                    color: "#FF8100",
+                                  },
+                                }}
+                              />
+                            }
+                          />
+                          {errors.permissions?.[index]?.checked && (
+                            <FormHelperText>
+                              {errors.permissions[index].checked.message}
+                            </FormHelperText>
+                          )}
+                        </FormControl>
+                      </Grid>
+                    ))}
+                  </Grid>
+                )}
+              />
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            type="submit"
+            sx={{
+              width: "184px",
+              height: "44px",
+              p: "10px 20px",
+              borderRadius: "5px",
+              bgcolor: "#FF8100",
+              mb: 2,
+              textTransform: "none",
+              fontFamily: "Roboto",
+              fontSize: "22px",
+              fontWeight: 400,
+              lineHeight: "24px",
+              letterSpacing: "0.15000000596046448px",
+            }}
+            // autoFocus
+            // onClick={() => setOpenDialog(false)}
+            variant="contained"
+          >
+            {roleAction}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
 };
 
-export default Users;
+export default Roles;

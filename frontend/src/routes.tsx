@@ -15,7 +15,8 @@ import OrderHistory from "./pages/OrderHistory";
 import DashboardLayout from "./Layouts/DashboardLayout";
 import Menus from "./pages/Menus";
 import Orders from "./pages/Orders";
-import Roles from "./pages/Roles";
+// import Roles from "./pages/Roles";
+import Roles from "./pages/RolesQuery";
 import Users from "./pages/Users";
 import RegisterRestaurant from "./pages/RegisterRestaurant";
 import AddAdmin from "./pages/AddAdmin";
@@ -25,6 +26,10 @@ const router = createBrowserRouter(
     <Route>
       <Route path="/sign-up" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />
+      <Route path="/" element={<RootLayout />}>
+        <Route index element={<Home />} />
+        <Route path="order_history" element={<OrderHistory />} />
+      </Route>
       <Route element={<PersistLogin />}>
         <Route element={<RequireAuth />}>
           <Route path="/order" element={<Order />} />
@@ -40,9 +45,6 @@ const router = createBrowserRouter(
             <Route path="user" element={<Users />} />
           </Route>
           {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          <Route path="/" element={<RootLayout />}>
-            <Route index element={<Home />} />
-            <Route path="order_history" element={<OrderHistory />} />
             {/* <Route element={<PersistLogin />}>
           <Route element={<RequireAuth />}>
             {/* <Route path="/" element={<App />}> */}
@@ -54,7 +56,6 @@ const router = createBrowserRouter(
               {/* </Route> */}
               {/* </Route>
           /Route> */}
-          </Route>
         </Route>
       </Route>
     </Route>

@@ -8,6 +8,7 @@ import carousel1 from "@/assets/carousel1.svg";
 import carousel2 from "@/assets/carousel2.svg";
 // import carousel3 from "@/assets/carousel3.svg";
 import carousel3 from "@/assets/carousel3.svg";
+import { useNavigate } from "react-router-dom";
 
 const responsive = {
   superLargeDesktop: {
@@ -138,6 +139,7 @@ const FeaturedPizza = () => {
 export default FeaturedPizza;
 
 const Slider = () => {
+  const navigate = useNavigate();
   return (
     <Carousel
       // explicitly setting for both draggable and swipeable to true
@@ -235,7 +237,8 @@ const Slider = () => {
                 or a typeface without.
               </Typography>
 
-              <Button
+              <Button 
+              onClick={() => navigate("/order")}
                 sx={{
                   width: "248.26px",
                   height: "60px",

@@ -7,6 +7,7 @@ import {
   MRT_ShowHideColumnsButton,
   MRT_ToggleFiltersButton,
   MRT_GlobalFilterTextField,
+  // MRT_GlobalFilterTextInput,
   type MRT_ColumnDef,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
@@ -172,7 +173,7 @@ const Roles = () => {
     enablePagination: false,
 // enableGlobalFilter: true,
 
-    initialState: { showColumnFilters: false, showGlobalFilter: true,},
+    initialState: { showColumnFilters: false , showGlobalFilter: true,},
 
     //add custom action buttons to top-left of top toolbar
     renderTopToolbarCustomActions: () => (
@@ -205,7 +206,7 @@ const Roles = () => {
           <PrintIcon />
         </IconButton> */}
         {/* along-side built-in buttons in whatever order you want them */}
-        {/* <MRT_GlobalFilterTextField  table={table} /> */}
+        {/* <MRT_GlobalFilterTextField  table={table} />  */}
         <MRT_ToggleFiltersButton table={table} />
         <MRT_ShowHideColumnsButton table={table} />
         <MRT_ToggleDensePaddingButton table={table} />
@@ -283,9 +284,9 @@ const Roles = () => {
     
     getRowId: (row) => row.phoneNumber,
     // initialState: { showColumnFilters: false, showGlobalFilter: true,},
-    manualFiltering: true,
-    manualPagination: true,
-    manualSorting: true,
+    manualFiltering: true, //turn off built-in client-side filtering
+    manualPagination: true, //turn off built-in client-side pagination
+    manualSorting: true, //turn off built-in client-side sorting
     muiToolbarAlertBannerProps: isError
       ? {
           color: "error",

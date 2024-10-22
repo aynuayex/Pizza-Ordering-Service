@@ -3,6 +3,16 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
 import OrderItem from "./OrderItem";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+
+export type FastingPizzasApiResponse = {
+  id: string;
+  name: string;
+  price: number;
+  toppings: string[];
+  _count: { orders: number };
+};
 
 const responsive = {
   superLargeDesktop: {
@@ -25,7 +35,19 @@ const responsive = {
 };
 
 const Fasting = () => {
+  const axiosPrivate = useAxiosPrivate();
   const timesToDisplay = [1, 2, 3, 4, 5];
+
+  const fastingPizza = useQuery({
+    queryKey: ["fasting-pizzas"],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<FastingPizzasApiResponse[]>("/menu/fasting");
+      return response.data;
+    },
+  });
+
+  console.log({ pizzaMenu: fastingPizza.data });
+
   return (
     <Box
       sx={{
@@ -61,8 +83,8 @@ const Fasting = () => {
           arrows={false}
           itemClass="carousel-item-padding-fasting"
         >
-          {timesToDisplay.map((item) => (
-            <OrderItem key={item} />
+          {fastingPizza.isSuccess && fastingPizza.data.map((item) => (
+            <OrderItem key={item.id} pizza={item} />
           ))}
         </Carousel>
       </Box>

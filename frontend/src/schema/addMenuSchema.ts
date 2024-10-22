@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const addOrderSchema = z.object({
+export const addMenuSchema = z.object({
   name: z
     .string()
     .min(2, { message: "book Name must be at least 2 characters." }),
@@ -33,4 +33,4 @@ export const addOrderSchema = z.object({
   // olives: z.boolean(),
 });
 
-export type AddOrderSchema = z.infer<typeof addOrderSchema>;
+export type AddMenuSchema = z.infer<typeof addMenuSchema>;

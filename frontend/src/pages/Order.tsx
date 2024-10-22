@@ -25,6 +25,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { orderSchema, OrderSchema } from "@/schema/orderSchema";
 import { useState } from "react";
 import Modal from "@/components/Modal";
+import { useLocation } from "react-router-dom";
+import { FastingPizzasApiResponse } from "@/components/Fasting";
+import { PopularPizzasApiResponse } from "@/components/PopularPizzas";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 const responsive = {
   superLargeDesktop: {
@@ -58,6 +62,12 @@ const Order = () => {
   const [count, setCount] = useState(1);
   const [open, setOpen] = useState(false);
 
+  const axiosPrivate = useAxiosPrivate();
+
+  const location = useLocation();
+  const pizza: PopularPizzasApiResponse | FastingPizzasApiResponse =
+    location.state?.pizza;
+
   const timesToDisplay = [1, 2, 3, 4, 5];
   const {
     handleSubmit,
@@ -66,9 +76,12 @@ const Order = () => {
   } = useForm<OrderSchema>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      toppings: toppings.map((topping) => ({
-        name: topping.name,
-        checked: topping.name === "olives" ? false : true, // default state
+      toppings: pizza.toppings.map((topping) => ({
+        name: topping.split(" ").join("_"),
+        checked: false, // default state
+        // toppings: toppings.map((topping) => ({
+        //   name: topping.name,
+        //   checked: topping.name === "olives" ? false : true, // default state
       })),
 
       // mozzarella: true,
@@ -81,21 +94,28 @@ const Order = () => {
 
   const onSubmit: SubmitHandler<OrderSchema> = async (data) => {
     try {
+      console.log({
+        count,
+        totalAmount: count * pizza.price,
+        toppings: data,
+        pizzaId: pizza.id,
+      });
+      const response = await axiosPrivate.post("/order", {
+        count,
+        totalAmount: count * pizza.price,
+        toppings: JSON.stringify(data.toppings),
+        pizzaId: pizza.id,
+      });
+      console.log(response);
       setOpen(true);
-      console.log({ data });
       //   setPersist(data.persist);
       //   localStorage.setItem("persist", JSON.stringify(data.persist));
-      //   const response = await axios.post("/login", {
-      //     ...data,
-      //     role: role || "OWNER",
-      //   });
       //   if (response.status === 200) {
       //     const { id, email, fullName, success, role, accessToken } =
       //       response.data;
       //     setAuth({ id, email, fullName, role, accessToken });
       //     navigate("/dashboard", { state: { message: success }, replace: true });
       //   }
-      //   console.log(response);
     } catch (err: any) {
       console.error(err);
       //   if (!err?.response) {
@@ -244,7 +264,7 @@ const Order = () => {
               color: "#000",
             }}
           >
-            Margherita
+            {pizza.name}
           </Typography>
           {/* </Box> */}
 
@@ -405,8 +425,42 @@ const Order = () => {
             name="toppings"
             control={control}
             render={({ field: { value = [], onChange } }) => (
-                  <Grid container spacing="5px">
-                    {toppings.map((topping, index) => (
+              <Grid container spacing="5px">
+                {pizza.toppings.map((topping, index) => (
+                  <Grid item key={topping}>
+                    <FormControl error={!!errors.toppings?.[index]?.checked}>
+                      <FormControlLabel
+                        label={topping}
+                        control={
+                          <Checkbox
+                            checked={value[index]?.checked || false}
+                            onChange={(e) => {
+                              const updatedToppings = [...value];
+                              updatedToppings[index] = {
+                                ...updatedToppings[index],
+                                checked: e.target.checked,
+                              };
+                              onChange(updatedToppings);
+                            }}
+                            disabled={isSubmitting}
+                            size="large"
+                            sx={{
+                              "&.Mui-checked": {
+                                color: "#FF8100",
+                              },
+                            }}
+                          />
+                        }
+                      />
+                      {errors.toppings?.[index]?.checked && (
+                        <FormHelperText>
+                          {errors.toppings[index].checked.message}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+                  </Grid>
+                ))}
+                {/* {toppings.map((topping, index) => (
                       <Grid item key={topping.name}>
                         <FormControl
                           error={!!errors.toppings?.[index]?.checked}
@@ -441,8 +495,8 @@ const Order = () => {
                           )}
                         </FormControl>
                       </Grid>
-                    ))}
-                  </Grid>
+                    ))} */}
+              </Grid>
             )}
           />
 
@@ -456,7 +510,9 @@ const Order = () => {
             }}
           >
             <IconButton
-              onClick={() => setCount((prevCount) => prevCount - 1)}
+              onClick={() =>
+                count > 0 && setCount((prevCount) => prevCount - 1)
+              }
               sx={{
                 width: "70px",
                 height: "60px",
@@ -551,7 +607,7 @@ const Order = () => {
                   color: "#01C550",
                 }}
               >
-                {count * 150}
+                {count * pizza.price}
               </Typography>
               <Typography
                 sx={{

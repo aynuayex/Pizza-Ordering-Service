@@ -36,9 +36,9 @@ const Home = () => {
               <Typography
                 sx={{
                   textAlign: "left",
-                  width: "634px",
+                  // width: "634px",
                   height: "225px",
-                  fontFamily: "Inter",
+                  // fontFamily: "Inter",
                   fontSize: "150px",
                   fontWeight: 700,
                   lineHeight: "225px",
@@ -58,7 +58,7 @@ const Home = () => {
                   width: "766px",
                   height: "108px",
                   opacity: 0.9,
-                  fontFamily: "Roboto",
+                  // fontFamily: "Roboto",
                   fontSize: "25px",
                   fontWeight: 400,
                   lineHeight: "36.17px",

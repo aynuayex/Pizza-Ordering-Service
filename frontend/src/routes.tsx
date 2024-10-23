@@ -24,6 +24,7 @@ import AddAdmin from "./pages/AddAdmin";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
+      <Route path="*" element="Not Found" />
       <Route path="/sign-up" element={<Register />} />
       <Route path="/sign-in" element={<Login />} />
       <Route path="/" element={<RootLayout />}>

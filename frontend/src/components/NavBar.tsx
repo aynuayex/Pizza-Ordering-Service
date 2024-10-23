@@ -7,11 +7,13 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import navbar_logo from "@/assets/navbar_logo.svg";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <AppBar
       position="static"
@@ -57,13 +59,13 @@ const NavBar = () => {
             sx={{
               width: "74px",
               height: "36px",
-              fontFamily: "Inter",
+              fontFamily: "sans-serif",
               fontSize: "25px",
-              fontWeight: 700,
+              fontWeight: location.pathname === "/" ? 700 : 500,
               lineHeight: "36.17px",
               letterSpacing: "0.03em",
             }}
-            color="#FF8100"
+            color={location.pathname === "/" ? "#FF8100": "#16120DBF"}
             underline="none"
             component={RouterLink}
             to="/"
@@ -75,13 +77,16 @@ const NavBar = () => {
             sx={{
               width: "86px",
               height: "36px",
-              fontFamily: "Inter",
+              "& .MuiLink-root": {
+                // fontFamily: "Inter",
+              },
+              fontFamily: "sans-serif",
               fontSize: "25px",
-              fontWeight: 500,
+              fontWeight: location.pathname === "/order_history" ? 700 : 500,
               lineHeight: "36.17px",
               letterSpacing: "0.03em",
             }}
-            color="#16120DBF"
+            color={location.pathname === "/order_history" ? "#FF8100": "#16120DBF"}
             underline="none"
             component={RouterLink}
             to="/order_history"
@@ -93,13 +98,13 @@ const NavBar = () => {
             sx={{
               width: "144px",
               height: "36px",
-              fontFamily: "Inter",
+              fontFamily: "sans-serif",
               fontSize: "25px",
-              fontWeight: 500,
+              fontWeight: location.pathname === "/orders" ? 700 : 500,
               lineHeight: "36.17px",
               letterSpacing: "0.03em",
             }}
-            color="#16120DBF"
+            color={location.pathname === "/orders" ? "#FF8100": "#16120DBF"}
             underline="none"
             component={RouterLink}
             to="/orders"

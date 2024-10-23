@@ -46,7 +46,7 @@ import { roleSchema, RoleSchema } from "@/schema/roleSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Toast from "@/components/Toast";
 
-type RoleApiResponse = {
+export type RoleApiResponse = {
   data: Array<Role>;
   meta: {
     totalRowCount: number;
@@ -281,10 +281,13 @@ const Roles = () => {
       });
       console.log({ responseData: response.data });
 
-      <Toast
-        message={`role successfully ${roleAction}!`}
-        severity="success"
-      />;
+      if (response.status === 200) {
+        refetch();
+        <Toast
+          message={`role successfully ${roleAction}!`}
+          severity="success"
+        />;
+      }
     } catch (err: any) {
       console.error(err);
       <Toast
@@ -520,7 +523,7 @@ const Roles = () => {
       sx: {
         boxSizing: "border-box",
         borderRadius: "5px",
-        padding: "49px 44px 194px 45px",
+        padding: "49px 44px 40px 45px",
         boxShadow: "0px 0px 15px 0px #0000000D",
       },
     },
@@ -648,6 +651,7 @@ const Roles = () => {
                 control={control}
                 render={({ field }) => (
                   <TextField
+                    autoFocus
                     {...field}
                     label="Role Name"
                     type="text"
@@ -743,8 +747,7 @@ const Roles = () => {
               lineHeight: "24px",
               letterSpacing: "0.15000000596046448px",
             }}
-            // autoFocus
-            // onClick={() => setOpenDialog(false)}
+            autoFocus
             variant="contained"
           >
             {roleAction}

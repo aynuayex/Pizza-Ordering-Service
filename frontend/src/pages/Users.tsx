@@ -41,6 +41,7 @@ import Toast from "@/components/Toast";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { addAdminSchema, AddAdminSchema } from "@/schema/addAdminSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { RoleApiResponse } from "./RolesQuery";
 
 type UserApiResponse = {
   data: Array<User>;
@@ -74,6 +75,7 @@ const csvConfig = mkConfig({
 });
 
 const Users = () => {
+  const [userAction, setUserAction] = useState("Add");
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [showGlobalFilter, setShowGlobalFilter] = useState(false);
   //manage our own state for stuff we want to pass to the API
@@ -92,6 +94,7 @@ const Users = () => {
   //consider storing this code in a custom hook (i.e useFetchUsers)
   const {
     data: { data = [], meta } = {}, //your data and api response will probably be different
+    isSuccess,
     isError,
     isRefetching,
     isLoading,
@@ -169,7 +172,10 @@ const Users = () => {
   // });
   const handleChange = async (id: string, isChecked: boolean) => {
     try {
-      const response = await axiosPrivate.put("/user", { id, isChecked });
+      const response = await axiosPrivate.patch("/user/status", {
+        id,
+        isChecked,
+      });
       if (response.status === 200) {
         <Toast
           message={`role successfully ${
@@ -188,6 +194,18 @@ const Users = () => {
         severity="error"
       />;
     }
+  };
+
+  const handleUpdate = async (id: string) => {
+    setUserAction("Update");
+    const user = data.filter((user) => user.roleId === id)[0];
+    setValue("adminName", user.fullName);
+    setValue("email", user.email);
+    setValue("phoneNumber", user.phoneNumber);
+    setValue("location", user.location);
+    setValue("password", user.password);
+    setValue("roleId", user.roleId);
+    setOpenFormDialog(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -218,34 +236,54 @@ const Users = () => {
       phoneNumber: "",
       location: "",
       password: "",
-      // permissions: permissions.map((item) => ({
-      //   label: item.label,
-      //   permission: item.permission,
-      //   checked: item.label === "Create Roles" ? false : true, // default state
-      // })),
+      roleId: "",
     },
+  });
+
+  const {
+    data: { data: roleData = [], meta: roleMeta } = {}, // your data and API response may vary
+    isSuccess: isRoleSuccess,
+    isError: isRoleError,
+    isRefetching: isRoleRefetching,
+    isLoading: isRoleLoading,
+    refetch: roleRefetch,
+  } = useQuery<RoleApiResponse>({
+    queryKey: ["table-data", [], "", 0, 999999, []],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<RoleApiResponse>("/role", {
+        params: {
+          start: 0,
+          size: 999999,
+          filters: JSON.stringify([]),
+          globalFilter: "",
+          sorting: JSON.stringify([]),
+        },
+      });
+      return response.data;
+    },
+    placeholderData: keepPreviousData, // optional, keeps previous data during refetching
   });
 
   const onSubmit: SubmitHandler<AddAdminSchema> = async (data) => {
     try {
-      // setOpen(true);
-      // console.log({ data });
-      // let response;
-      // if (roleAction === "Create") {
-      //   response = await axiosPrivate.post("/role", {
-      //     roleName: data.roleName,
-      //     permissions: JSON.stringify(data.permissions),
-      //   });
-      // }
-      // response = await axiosPrivate.patch("/role", {
-      //   roleName: data.roleName,
-      //   permissions: JSON.stringify(data.permissions),
-      // });
-      // console.log({ responseData: response.data });
-      // <Toast
-      //   message={`role successfully ${roleAction}!`}
-      //   severity="success"
-      // />;
+      console.log({ data });
+      let response;
+      if (userAction === "Add") {
+        response = await axiosPrivate.post("/user", {
+          ...data,
+        });
+      }
+      response = await axiosPrivate.patch("/user", {
+        email: data.email,
+        roleId: data.roleId,
+      });
+      console.log({ responseData: response.data });
+
+      if (response.status === 201 || response.status === 200) {
+        refetch();
+        setOpenFormDialog(false);
+        <Toast message={response.data.success} severity="success" />;
+      }
     } catch (err: any) {
       console.error(err);
       <Toast
@@ -345,7 +383,7 @@ const Users = () => {
 
         <IconButton
           sx={{ color: "#000000BF" }}
-          onClick={() => console.info("Edit")}
+          onClick={() => handleUpdate(row.original.roleId)}
         >
           <VisibilityIcon />
         </IconButton>
@@ -368,7 +406,16 @@ const Users = () => {
           padding: "5px 20px 5px 20px",
           borderRadius: "5px",
         }}
-        onClick={() => setOpenFormDialog(true)}
+        onClick={() => {
+          setUserAction("Add");
+          // setValue("adminName", "");
+          // setValue("email", "");
+          // setValue("phoneNumber", "");
+          // setValue("location", "");
+          // setValue("password", "");
+          // setValue("roleId", "");
+          setOpenFormDialog(true);
+        }}
         variant="contained"
       >
         Add User
@@ -517,7 +564,7 @@ const Users = () => {
 
   return (
     <>
-      <MaterialReactTable table={table} />;
+      <MaterialReactTable table={table} />
       <Dialog
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
@@ -553,7 +600,7 @@ const Users = () => {
                 {...field}
                 label="Admin Name"
                 type="text"
-                disabled={isSubmitting}
+                disabled={isSubmitting || userAction === "Update"}
                 error={!!errors.adminName}
                 helperText={errors.adminName?.message}
               />
@@ -569,8 +616,8 @@ const Users = () => {
                 margin="dense"
                 {...field}
                 label="Email"
-                type="text"
-                disabled={isSubmitting}
+                type="email"
+                disabled={isSubmitting || userAction === "Update"}
                 error={!!errors.email}
                 helperText={errors.email?.message}
               />
@@ -586,8 +633,8 @@ const Users = () => {
                 margin="dense"
                 {...field}
                 label="Phone Number"
-                type="text"
-                disabled={isSubmitting}
+                type="tel"
+                disabled={isSubmitting || userAction === "Update"}
                 error={!!errors.phoneNumber}
                 helperText={errors.phoneNumber?.message}
               />
@@ -604,7 +651,7 @@ const Users = () => {
                 {...field}
                 label="Location"
                 type="text"
-                disabled={isSubmitting}
+                disabled={isSubmitting || userAction === "Update"}
                 error={!!errors.location}
                 helperText={errors.location?.message}
               />
@@ -620,96 +667,76 @@ const Users = () => {
                 margin="dense"
                 {...field}
                 label="Password"
-                type="text"
-                disabled={isSubmitting}
+                type="password"
+                disabled={isSubmitting || userAction === "Update"}
                 error={!!errors.password}
                 helperText={errors.password?.message}
               />
             )}
           />
-          <Controller
-            name="role"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                select
-                required
-                margin="dense"
-                {...field}
-                // value={formData.category}
-                // onChange={handleInputChange}
-                label="Select Role"
-                disabled={isSubmitting}
-                error={!!errors.role}
-                helperText={errors.role?.message}
-                // fullWidth
-                // variant="filled"
-              >
-                <MenuItem value="FICTION">Fiction</MenuItem>
-                <MenuItem value="SELF_HELP">Self Help</MenuItem>
-                <MenuItem value="BUSINESS">Business</MenuItem>
-              </TextField>
-            )}
-          />
-
-          <Button
-            variant="contained"
-            // fullWidth
-            autoFocus
-            sx={{ textTransform: "none", m: 2, bgcolor: "primary.light" }}
-            onClick={() => setOpenFormDialog(false)}
+          <Box
+            width={"100%"}
+            display={"flex"}
+            justifyContent={"space-between"}
+            gap="100px"
+            mt={2}
           >
-            Add
-          </Button>
+            <Controller
+              name="roleId"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  select
+                  required
+                  // margin="dense"
+                  {...field}
+                  // value={formData.category}
+                  // onChange={handleInputChange}
+                  label="Select Role"
+                  disabled={
+                    isSubmitting ||
+                    isRoleLoading ||
+                    isRoleRefetching ||
+                    isRoleError
+                  }
+                  error={!!errors.roleId}
+                  helperText={errors.roleId?.message}
+                  fullWidth
+                >
+                  {isRoleSuccess &&
+                    roleData
+                      ?.filter(
+                        (role) =>
+                          role.name !== "SUPER_ADMIN" &&
+                          role.name !== "CUSTOMER"
+                      )
+                      .map((role) => (
+                        <MenuItem value={role.id}>{role.name}</MenuItem>
+                      ))}
+                </TextField>
+              )}
+            />
 
-          {/* <TextField
-            autoFocus
-            required
-            margin="dense"
-            name="book"
-            value={formData.book}
-            onChange={handleInputChange}
-            label="Book Name"
-            fullWidth
-            variant="filled"
-          />
-          <TextField
-            required
-            margin="dense"
-            name="author"
-            value={formData.author}
-            onChange={handleInputChange}
-            label="Author Name"
-            fullWidth
-            variant="filled"
-          /> */}
-          {/* <TextField
-            select
-            required
-            margin="dense"
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            label="Category"
-            fullWidth
-            variant="filled"
-          >
-            <MenuItem value="FICTION">Fiction</MenuItem>
-            <MenuItem value="SELF_HELP">Self Help</MenuItem>
-            <MenuItem value="BUSINESS">Business</MenuItem>
-          </TextField> */}
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              autoFocus
+              sx={{
+                textTransform: "none",
+                bgcolor: "#FF8100",
+                // fontFamily: "Roboto",
+                fontSize: "22px",
+                fontWeight: 400,
+                lineHeight: "24px",
+                textAlign: "left",
+                letterSpacing: "0.15000000596046448px",
+              }}
+            >
+              {userAction}
+            </Button>
+          </Box>
         </DialogContent>
-        {/* <DialogActions>
-          <Button
-            variant="contained"
-            fullWidth
-            autoFocus
-            sx={{ textTransform: "none", m: 2, bgcolor: "primary.light" }}
-            onClick={() => setOpenFormDialog(false)}
-          >
-            Add
-          </Button>
-        </DialogActions> */}
       </Dialog>
     </>
   );

@@ -74,6 +74,18 @@ const handleUserActiveStatus = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 }
+const handleUserRoleChange = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { roleId, email } = req.body;
+    const updatedUser = await prisma.user.update({where: {email}, data: {roleId}, include: {role: true}});
+    console.log({updatedUser});
+    res.status(200).json({success: `User ${updatedUser.fullName} updated to role ${updatedUser.role.name} successfully!`});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+}
 
 const handleUserDelete = async (req, res) => {
   try {
@@ -139,6 +151,7 @@ const handleOwnerDelete = async (req, res, next) => {
 
 module.exports = {
   handleGetAllUsers,
+  handleUserRoleChange,
   handleUserActiveStatus,
   handleUserDelete,
 

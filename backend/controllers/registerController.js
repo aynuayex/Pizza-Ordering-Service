@@ -30,8 +30,8 @@ const handleNewUser = async (
     // encrypt password
     const hashedPwd = await bcrypt.hash(password, 10);
 
-    let accessToken;
-    let refreshToken;
+    let accessToken = "";
+    let refreshToken = "";
 
     // create JWTs
     if (createToken) {
@@ -72,7 +72,7 @@ const handleNewUser = async (
 
     // res.status(201).json({ success: `New user ${fullName} with role ${role} created!`, id: result.id, email, fullName, role, accessToken  });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Error handling new user:", err.message);
   }
 };
 
@@ -296,7 +296,7 @@ const handleAddAdmin = async (req, res) => {
   try {
     console.log(req.body);
     const {
-      fullName,
+      adminName,
       email,
       password,
       location,
@@ -304,7 +304,7 @@ const handleAddAdmin = async (req, res) => {
       roleId
     } = req.body;
     if (
-      !fullName ||
+      !adminName ||
       !email ||
       !password ||
       !location ||
@@ -330,7 +330,7 @@ const handleAddAdmin = async (req, res) => {
     const adminRole = await prisma.role.findUnique({ where: { id: roleId } });
 
     const { accessToken, refreshToken, id } = await handleNewUser(
-      fullName,
+      adminName,
       email,
       password,
       location,
@@ -339,7 +339,7 @@ const handleAddAdmin = async (req, res) => {
       (createToken = false)
     );
 
-    const assigningUser = await prisma.restaurant.findUnique({where: {email: req.user.email}});
+    const assigningUser = await prisma.user.findUnique({where: {email: req.user.email}});
 
     //connect the admin with the associated Restaurant
     await prisma.restaurant.update({
@@ -352,7 +352,7 @@ const handleAddAdmin = async (req, res) => {
     });
 
     res.status(201).json({
-      success: `New user ${fullName} with role ${adminRole.name} created!`,
+      success: `New user ${adminName} with role ${adminRole.name} created successfully!`,
       // , id, email, fullName, role: adminRole, accessToken
     });
 

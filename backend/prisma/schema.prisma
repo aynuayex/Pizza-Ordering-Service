@@ -13,13 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Roles: Super Admin, Admin, User (for managing the system)
-// enum Role {
-//   SUPER_ADMIN
-//   ADMIN
-//   USER
-// }
-
+// Role model
 model Role {
   id          String   @id @default(uuid())
   name        String   @unique
@@ -41,13 +35,12 @@ model User {
   phoneNumber  String
   refreshToken String[]
   active       Boolean  @default(true)
-  // role      Role // Defines the role of the user
   role         Role     @relation(fields: [roleId], references: [id])
   roleId       String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id]) // Super Admin or Admin can manage a restaurant
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id]) 
   restaurantId String?
   Order        Order[]
 }

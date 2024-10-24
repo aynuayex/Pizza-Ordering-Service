@@ -2,3 +2,10 @@ Error: Not allowed by CORS.
 Error: Not allowed by CORS.
 Error: Not allowed by CORS.
 TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')
+TypeError: Cannot read properties of undefined (reading 'role')

@@ -239,6 +239,7 @@ const handleRegisterCustomer = async (req, res) => {
           description: "Customers can place orders and view pizzas",
           permissions: JSON.stringify([
             { action: "read", subject: "Pizza" },
+            { action: "read", subject: "Orders" },
             { action: "create", subject: "Order" },
           ]),
         },

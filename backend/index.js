@@ -10,11 +10,11 @@ const errorHandler = require("./middleware/errorHandler");
 const verifyJWT = require("./middleware/verifyJWT");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middleware/credentials");
-const dbConnector = require('./config/dbConnect');
+const dbConnector = require("./config/dbConnect");
 
 const PORT = process.env.PORT || 3000;
 
-let server;  // Declare a variable to hold the server instance
+let server; // Declare a variable to hold the server instance
 
 // Initiate the connection
 dbConnector.connect();
@@ -41,39 +41,20 @@ app.use(express.json());
 app.use(cookieParser());
 
 //routes
-app.get("/", (req, res) => res.send("vercel backend(NODEJS/EXPRESSJS) deployment successful!"))
-app.use(
-  "/register",
-  require("./routes/register") 
+app.get("/", (req, res) =>
+  res.send("vercel backend(NODEJS/EXPRESSJS) deployment successful!")
 );
-app.use(
-  "/login",
-  require("./routes/login") 
-);
-app.use(
-  "/refresh",
-  require("./routes/refresh") 
-);
-app.use(
-  "/logout",
-  require("./routes/logout") 
-);
+app.use("/register", require("./routes/register"));
+app.use("/login", require("./routes/login"));
+app.use("/refresh", require("./routes/refresh"));
+app.use("/logout", require("./routes/logout"));
 
-app.use(
-  "/role", verifyJWT,
-  require("./routes/role") 
-);
-app.use(
-  "/user", verifyJWT,
-  require("./routes/user") 
-);
+app.use("/role", verifyJWT, require("./routes/role"));
+app.use("/user", verifyJWT, require("./routes/user"));
 
-app.use("/menu", verifyJWT,
-  require("./routes/menu")
-)
-app.use("/order", verifyJWT,
-  require("./routes/order")
-)
+app.use("/restaurants", require("./routes/restaurant"));
+app.use("/menu", require("./routes/menu"));
+app.use("/order", verifyJWT, require("./routes/order"));
 
 // default(404)
 app.all("*", (req, res) => {
@@ -84,16 +65,17 @@ app.all("*", (req, res) => {
 app.use(errorHandler);
 
 // Listen for the 'connected' event to start the server
-dbConnector.on('connected', () => {
-  server = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+dbConnector.on("connected", () => {
+  server = app.listen(PORT, () =>
+    console.log(`Server is running on port ${PORT}`)
+  );
 });
 
 // Optionally handle the 'error' event
-dbConnector.on('error', (error) => {
+dbConnector.on("error", (error) => {
   console.error("Connection error: ", error);
   process.exit(1); // Exit the process if there's a connection error
 });
-
 
 // Graceful shutdown
 const shutdown = async () => {

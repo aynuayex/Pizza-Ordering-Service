@@ -37,13 +37,18 @@ const handleGetAllUsers = async (req, res) => {
       : [{ createdAt: "asc" }]; // Default sorting if none is provided
 
     // Fetch data from Prisma
-    const users = await prisma.user.findMany({
+    let users = await prisma.user.findMany({
       skip: parseInt(start, 10), // for pagination
       take: parseInt(size, 10), // for pagination
       where, // filtering
       orderBy, // sorting
     });
 
+    // removing refreshToken and password from user
+    users = users.map((user) => {
+      const { refreshToken: toBeRemoved, password: toBeDeleted, ...userData } = user;
+      return { ...userData };
+    });
     // Fetch total row count for pagination purposes
     const totalRowCount = await prisma.user.count({
       where,
@@ -57,7 +62,7 @@ const handleGetAllUsers = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log({err});
+    console.log({ err });
     res.status(500).json({ message: err.message });
   }
 };
@@ -66,41 +71,49 @@ const handleUserActiveStatus = async (req, res) => {
   try {
     console.log(req.body);
     const { id, isChecked } = req.body;
-    const updatedUser = await prisma.user.update({where: {id}, data: {active: isChecked}});
-    console.log({updatedUser});
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { active: isChecked },
+    });
+    console.log({ updatedUser });
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
   }
-}
+};
+
 const handleUserRoleChange = async (req, res) => {
   try {
     console.log(req.body);
     const { roleId, email } = req.body;
-    const updatedUser = await prisma.user.update({where: {email}, data: {roleId}, include: {role: true}});
-    console.log({updatedUser});
-    res.status(200).json({success: `User ${updatedUser.fullName} updated to role ${updatedUser.role.name} successfully!`});
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: { roleId },
+      include: { role: true },
+    });
+    console.log({ updatedUser });
+    res.status(200).json({
+      success: `User ${updatedUser.fullName} updated to role ${updatedUser.role.name} successfully!`,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
   }
-}
+};
 
 const handleUserDelete = async (req, res) => {
   try {
     console.log(req.body);
     const { id } = req.body;
-    const updatedUser = await prisma.user.delete({where: {id}});
-    console.log({updatedUser});
+    const updatedUser = await prisma.user.delete({ where: { id } });
+    console.log({ updatedUser });
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
   }
-}
-
-
+};
 
 const handleGetAllOwners = async (req, res) => {
   try {
@@ -154,7 +167,6 @@ module.exports = {
   handleUserRoleChange,
   handleUserActiveStatus,
   handleUserDelete,
-
 
   handleGetAllOwners,
   handleOwnerUpdate,

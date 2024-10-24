@@ -2,12 +2,13 @@ const prisma = require("../config/prisma");
 
 const handleGetPopularPizza = async (req, res) => {
 try {
-  const popularPizzas = await prisma.pizza.findMany({
+  let popularPizzas = await prisma.pizza.findMany({
     select: {
       id: true,
       name: true,
       toppings: true,
       price: true,
+      createdBy: true,
       _count: {
         select: { orders: true },  // Count the number of orders for each pizza
       },
@@ -16,6 +17,12 @@ try {
       orders: { _count: 'desc' },  // Sort by the number of orders (descending)
     },
   });
+
+    // removing refreshToken and password from user
+  popularPizzas = popularPizzas.map(pizza => {
+    const { refreshToken: toBeRemoved, password: toBeDeleted,  ...userData } = pizza.createdBy
+    return { ...pizza, createdBy: { ...userData} }  
+  })
   console.log({popularPizzas});
   res.status(200).json(popularPizzas);
 } catch (err) {
@@ -30,17 +37,18 @@ const handleMenuCreate = async (req, res) => {
     const {name, price, toppings} = req.body;
     const filteredToppings = JSON.parse(toppings).filter(topping => topping.checked).map(topping => topping.name);
 
-    const restaurant = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {email: req.user.email}
     });
 
-    console.log({restaurant})
+    console.log({user})
     const createPizzaMenu = await prisma.pizza.create({
       data: {
         name,
         toppings: filteredToppings,
         price,
-        restaurantId: restaurant.restaurantId,
+        restaurantId: user.restaurantId,
+        createdBy: user.id
       }
     })
     console.log({createPizzaMenu})

@@ -64,6 +64,21 @@ const handleGetAllOrders = async (req, res) => {
   }
 };
 
+const handleGetOrderHistory = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({ where: {email: req.user.email}});
+
+    const orderHistory = await prisma.order.findMany({where: { customerId: user.id}, include: {pizza: true}});
+
+    const stringifiedPizzaOrderHistory = orderHistory.map(order => ({ ...order, pizza: JSON.stringify(order.pizza)}));
+
+    res.status(200).json({orderHistory: stringifiedPizzaOrderHistory});
+  } catch (err) {
+    console.error("Error getting order history:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const handleOrderCreate = async (req, res) => {
   try {
     console.log({ data: req.body });
@@ -138,6 +153,7 @@ const handleOrderStatusUpdate = async (req, res) => {
 module.exports = {
   handleOrderCreate,
   handleGetAllOrders,
+  handleGetOrderHistory,
   handleOrderStatusUpdate,
 
 

@@ -6,6 +6,9 @@ import female from "@/assets/female.svg";
 import hang from "@/assets/hang.svg";
 import flash from "@/assets/flash.svg";
 import innerBox from "@/assets/innerBox.svg";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { useQuery } from "@tanstack/react-query";
+import Toast from "./Toast";
 
 const responsive = {
   superLargeDesktop: {
@@ -27,14 +30,39 @@ const responsive = {
   },
 };
 
+type TopRestaurantsApiResponse = {
+  id: string;
+  name: string;
+  totalOrders: number;
+};
+
 const TopRestaurants = () => {
-  const timesToDisplay = [1, 2, 3, 4, 5];
+  const axiosPrivate = useAxiosPrivate();
+
+  const popularRestaurants = useQuery({
+    queryKey: ["restaurants-top"],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<TopRestaurantsApiResponse[]>(
+        "/restaurants/top"
+      );
+      return response.data;
+    },
+  });
+
+  if (popularRestaurants.isError) {
+    <Toast
+      message="There is an Error fetching popular Restaurants, please try later!"
+      severity="error"
+    />;
+  }
+
+  console.log({ popularRestaurants: popularRestaurants.data });
+
   return (
     <Box
       sx={{
         background:
           "linear-gradient(180deg, rgba(250, 126, 0, 0) 0%, rgba(250, 126, 0, 0.2) 60.5%, rgba(148, 74, 0, 0) 100%)",
-        // position: "relative",
         mt: -36,
       }}
     >
@@ -53,19 +81,20 @@ const TopRestaurants = () => {
       >
         Top Restaurants
       </Typography>
-      <Box pb={20} pl={5} >
-      <Carousel
-        swipeable={true}
-        draggable={true}
-        responsive={responsive}
-        keyBoardControl={true}
-        arrows={false}
-        itemClass="carousel-item-padding"
-      >
-        {timesToDisplay.map((item) => (
-          <Slider key={item} />
-        ))}
-      </Carousel>
+      <Box pb={20} pl={5}>
+        <Carousel
+          swipeable={true}
+          draggable={true}
+          responsive={responsive}
+          keyBoardControl={true}
+          arrows={false}
+          itemClass="carousel-item-padding"
+        >
+          {popularRestaurants.isSuccess &&
+            popularRestaurants.data.map((item) => (
+              <Slider key={item.id} restaurant={item} />
+            ))}
+        </Carousel>
       </Box>
     </Box>
   );
@@ -73,7 +102,7 @@ const TopRestaurants = () => {
 
 export default TopRestaurants;
 
-const Slider = () => {
+const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
   return (
     <Box
       sx={{
@@ -123,7 +152,8 @@ const Slider = () => {
               color: "#000000",
             }}
           >
-            Azmera Pizza
+            {restaurant.name}
+            {/* Azmera Pizza */}
           </Typography>
         </Box>
         <Typography
@@ -233,7 +263,8 @@ const Slider = () => {
               color: "#FF8100",
             }}
           >
-            2K
+            {restaurant.totalOrders}
+            {/* 2K */}
           </Typography>
         </Box>
       </Box>

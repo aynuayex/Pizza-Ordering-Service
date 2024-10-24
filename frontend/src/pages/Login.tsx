@@ -181,7 +181,6 @@ function Login() {
           </Stack>
           <Typography variant="h5" sx={{ mb: -1 }}>
             Login
-            {/* /{role === "SYSADMIN" ? "Admin" : "Owner"} */}
           </Typography>
           <Divider sx={{ mb: 3 }} />
 

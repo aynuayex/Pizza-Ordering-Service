@@ -44,26 +44,13 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 import fileDownload from "@/assets/fileDownload.svg";
 import Toast from "@/components/Toast";
+import { Order } from "@/types";
 
 type OrderApiResponse = {
   data: Array<Order>;
   meta: {
     totalRowCount: number;
   };
-};
-
-type Order = {
-  id: string;
-  pizzaId: string;
-  pizza: string;
-  customerId: string;
-  customer: string;
-  quantity: number;
-  totalAmount: number;
-  status: "Preparing" | "Ready" | "Delivered";
-  toppings: string;
-  createdAt: string;
-  updatedAt: string;
 };
 
 const csvConfig = mkConfig({

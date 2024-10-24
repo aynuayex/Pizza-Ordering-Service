@@ -1,12 +1,11 @@
 import {
   Box,
   Button,
+  ButtonBase,
   Checkbox,
   FormControl,
   FormControlLabel,
-  FormGroup,
   FormHelperText,
-  FormLabel,
   Grid,
   IconButton,
   Typography,
@@ -25,10 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { orderSchema, OrderSchema } from "@/schema/orderSchema";
 import { useState } from "react";
 import Modal from "@/components/Modal";
-import { useLocation } from "react-router-dom";
-import { FastingPizzasApiResponse } from "@/components/Fasting";
-import { PopularPizzasApiResponse } from "@/components/PopularPizzas";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { PizzasApiResponse } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 
 const responsive = {
   superLargeDesktop: {
@@ -50,14 +49,6 @@ const responsive = {
   },
 };
 
-const toppings = [
-  { name: "mozzarella", label: "Mozzarella" },
-  { name: "tomato", label: "Tomato" },
-  { name: "bell_peppers", label: "Bell Peppers" },
-  { name: "onions", label: "Onions" },
-  { name: "olives", label: "Olives" },
-];
-
 const Order = () => {
   const [count, setCount] = useState(1);
   const [open, setOpen] = useState(false);
@@ -65,10 +56,18 @@ const Order = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const location = useLocation();
-  const pizza: PopularPizzasApiResponse | FastingPizzasApiResponse =
-    location.state?.pizza;
+  const pizza: PizzasApiResponse = location.state?.pizza;
 
-  const timesToDisplay = [1, 2, 3, 4, 5];
+  const pizzaMenu = useQuery({
+    queryKey: ["popular-pizzas"],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<PizzasApiResponse[]>(
+        "/menu/popular"
+      );
+      return response.data;
+    },
+  });
+
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
@@ -78,17 +77,8 @@ const Order = () => {
     defaultValues: {
       toppings: pizza.toppings.map((topping) => ({
         name: topping.split(" ").join("_"),
-        checked: false, // default state
-        // toppings: toppings.map((topping) => ({
-        //   name: topping.name,
-        //   checked: topping.name === "olives" ? false : true, // default state
+        checked: false, 
       })),
-
-      // mozzarella: true,
-      // tomato: true,
-      // bell_peppers: true,
-      // onions: true,
-      // olives: false,
     },
   });
 
@@ -108,27 +98,8 @@ const Order = () => {
       });
       console.log(response);
       setOpen(true);
-      //   setPersist(data.persist);
-      //   localStorage.setItem("persist", JSON.stringify(data.persist));
-      //   if (response.status === 200) {
-      //     const { id, email, fullName, success, role, accessToken } =
-      //       response.data;
-      //     setAuth({ id, email, fullName, role, accessToken });
-      //     navigate("/dashboard", { state: { message: success }, replace: true });
-      //   }
     } catch (err: any) {
       console.error(err);
-      //   if (!err?.response) {
-      //     setErrMsg("Server can not be reached, Please Try again later!");
-      //   } else if (err.response?.status === 400) {
-      //     setErrMsg("Missing Email or Password!");
-      //   } else if (err.response?.status === 401) {
-      //     setErrMsg("Unauthorized, Your Email and/or Password is not correct!");
-      //   } else if (err.response?.status === 403) {
-      //     setErrMsg("Forbidden,Your account is not approved by Admin!");
-      //   } else {
-      //     setErrMsg("Login Failed, Please Try again later!");
-      //   }
     }
   };
 
@@ -146,8 +117,6 @@ const Order = () => {
           bgcolor: "#FFF8F1",
           height: "500px",
           padding: "51px 51px 0px 51px",
-          // position: "relative",
-          //   mb: "50px",
         }}
       >
         <Box
@@ -242,16 +211,9 @@ const Order = () => {
             my: "60px",
             display: "flex",
             flexDirection: "column",
-            //   justifyContent: "center",
             gap: "20px",
           }}
         >
-          {/* <Box
-            sx={{
-              width: "522px",
-              height: "203px",
-            }}
-          > */}
           <Typography
             sx={{
               width: "418px",
@@ -266,160 +228,6 @@ const Order = () => {
           >
             {pizza.name}
           </Typography>
-          {/* </Box> */}
-
-          {/* <Box
-            // width={"412px"}
-            height="107px"
-            sx={{
-              display: "flex",
-              gap: "15px",
-            }}
-          >
-            <Controller
-              name="mozzarella"
-              control={control}
-              render={({ field }) => (
-                <FormControl error={!!errors.mozzarella}>
-                  <FormControlLabel
-                    label="Mozzarella"
-                    control={
-                      <Checkbox
-                        {...field}
-                        disabled={isSubmitting}
-                        defaultChecked
-                        size="large"
-                        sx={{
-                          "&.Mui-checked": {
-                            color: "#FF8100",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  {errors.mozzarella && (
-                    <FormHelperText>{errors.mozzarella.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="tomato"
-              control={control}
-              render={({ field }) => (
-                <FormControl error={!!errors.tomato}>
-                  <FormControlLabel
-                    label="Tomato"
-                    control={
-                      <Checkbox
-                        {...field}
-                        disabled={isSubmitting}
-                        defaultChecked
-                        size="large"
-                        sx={{
-                          "&.Mui-checked": {
-                            color: "#FF8100",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  {errors.tomato && (
-                    <FormHelperText>{errors.tomato.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="bell_peppers"
-              control={control}
-              render={({ field }) => (
-                <FormControl error={!!errors.bell_peppers}>
-                  <FormControlLabel
-                    label="Bell Peppers"
-                    control={
-                      <Checkbox
-                        {...field}
-                        disabled={isSubmitting}
-                        defaultChecked
-                        size="large"
-                        sx={{
-                          "&.Mui-checked": {
-                            color: "#FF8100",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  {errors.bell_peppers && (
-                    <FormHelperText>
-                      {errors.bell_peppers.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              gap: "15px",
-            }}
-          >
-            <Controller
-              name="onions"
-              control={control}
-              render={({ field }) => (
-                <FormControl error={!!errors.onions}>
-                  <FormControlLabel
-                    label="Onions"
-                    control={
-                      <Checkbox
-                        {...field}
-                        disabled={isSubmitting}
-                        defaultChecked
-                        size="large"
-                        sx={{
-                          "&.Mui-checked": {
-                            color: "#FF8100",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  {errors.onions && (
-                    <FormHelperText>{errors.onions.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="olives"
-              control={control}
-              render={({ field }) => (
-                <FormControl error={!!errors.olives}>
-                  <FormControlLabel
-                    label="Olives"
-                    control={
-                      <Checkbox
-                        {...field}
-                        disabled={isSubmitting}
-                        size="large"
-                        sx={{
-                          "&.Mui-checked": {
-                            color: "#FF8100",
-                          },
-                        }}
-                      />
-                    }
-                  />
-                  {errors.olives && (
-                    <FormHelperText>{errors.olives.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-          </Box> */}
 
           <Controller
             name="toppings"
@@ -430,7 +238,15 @@ const Order = () => {
                   <Grid item key={topping}>
                     <FormControl error={!!errors.toppings?.[index]?.checked}>
                       <FormControlLabel
-                        label={topping}
+                        label={topping
+                          .split("_")
+                          .map((word) => {
+                            return (
+                              word.charAt(0).toUpperCase() +
+                              word.slice(1).toLowerCase()
+                            );
+                          })
+                          .join(" ")}
                         control={
                           <Checkbox
                             checked={value[index]?.checked || false}
@@ -460,50 +276,12 @@ const Order = () => {
                     </FormControl>
                   </Grid>
                 ))}
-                {/* {toppings.map((topping, index) => (
-                      <Grid item key={topping.name}>
-                        <FormControl
-                          error={!!errors.toppings?.[index]?.checked}
-                        >
-                          <FormControlLabel
-                            label={topping.label}
-                            control={
-                              <Checkbox
-                                checked={value[index]?.checked || false}
-                                onChange={(e) => {
-                                  const updatedToppings = [...value];
-                                  updatedToppings[index] = {
-                                    ...updatedToppings[index],
-                                    checked: e.target.checked,
-                                  };
-                                  onChange(updatedToppings);
-                                }}
-                                disabled={isSubmitting}
-                                size="large"
-                                sx={{
-                                  "&.Mui-checked": {
-                                    color: "#FF8100",
-                                  },
-                                }}
-                              />
-                            }
-                          />
-                          {errors.toppings?.[index]?.checked && (
-                            <FormHelperText>
-                              {errors.toppings[index].checked.message}
-                            </FormHelperText>
-                          )}
-                        </FormControl>
-                      </Grid>
-                    ))} */}
               </Grid>
             )}
           />
 
           <Box
             sx={{
-              //   width: "395px",
-              //   height: "60px",
               display: "flex",
               alignItems: "center",
               gap: "50px",
@@ -566,10 +344,6 @@ const Order = () => {
               <Box
                 sx={{
                   width: "23.33px",
-                  // height: "440px",
-                  // position: "absolute",
-                  // top: "50px",
-                  // left: "50px",
                 }}
                 component={"img"}
                 src={minus}
@@ -579,10 +353,6 @@ const Order = () => {
                 sx={{
                   position: "absolute",
                   height: "23.33px",
-                  // height: "440px",
-                  // position: "absolute",
-                  // top: "50px",
-                  // left: "50px",
                 }}
                 component={"img"}
                 src={plus}
@@ -627,7 +397,6 @@ const Order = () => {
           </Box>
           <Button
             type="submit"
-            // onClick={() => {}}
             variant="contained"
             sx={{
               width: "522px",
@@ -662,8 +431,6 @@ const Order = () => {
           background: "#FFF8F1",
           pt: "96px",
           px: "89px",
-          // position: "relative",
-          // mb: 20,
         }}
       >
         <Typography
@@ -673,8 +440,6 @@ const Order = () => {
             fontWeight: 500,
             lineHeight: "75px",
             color: "#00000080",
-            // ml: 5,
-            // pt: 13,
             textAlign: "left",
           }}
           gutterBottom
@@ -690,9 +455,10 @@ const Order = () => {
             arrows={false}
             itemClass="carousel-item-padding-fasting"
           >
-            {timesToDisplay.map((item) => (
-              <RelatedOrderItem key={item} />
-            ))}
+            {pizzaMenu.isSuccess &&
+              pizzaMenu.data
+                .filter((item) => item.id !== pizza.id).slice(0,5)
+                .map((item) => <RelatedOrderItem key={item.id} pizza={item} />)}
           </Carousel>
         </Box>
       </Box>
@@ -702,7 +468,9 @@ const Order = () => {
 
 export default Order;
 
-const RelatedOrderItem = () => {
+const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
+  const navigate = useNavigate();
+
   return (
     <Box
       sx={{
@@ -718,6 +486,8 @@ const RelatedOrderItem = () => {
       }}
     >
       <Box
+        component={ButtonBase}
+        onClick={() => navigate("/order", { state: { pizza } })}
         sx={{
           width: "327px",
           height: "466px",
@@ -758,7 +528,6 @@ const RelatedOrderItem = () => {
             mt={1}
             sx={{
               textAlign: "center",
-              //   width: "131px",
               height: "24px",
               fontFamily: "Roboto",
               fontSize: "25px",
@@ -768,7 +537,7 @@ const RelatedOrderItem = () => {
               color: "#000000",
             }}
           >
-            Margherita
+            {pizza.name}
           </Typography>
           <Typography
             sx={{
@@ -783,7 +552,18 @@ const RelatedOrderItem = () => {
               color: "#000000BF",
             }}
           >
-            Tomato, Mozzarella, Bell Peppers, Onions, Olives
+            {pizza?.toppings
+              .map((topping) =>
+                topping
+                  .split("_")
+                  .map((word) => {
+                    return (
+                      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                    );
+                  })
+                  .join(" ")
+              )
+              .join(", ")}
           </Typography>
         </Box>
       </Box>

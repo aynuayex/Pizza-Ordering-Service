@@ -77,9 +77,6 @@ const NavBar = () => {
             sx={{
               width: "86px",
               height: "36px",
-              "& .MuiLink-root": {
-                // fontFamily: "Inter",
-              },
               fontFamily: "sans-serif",
               fontSize: "25px",
               fontWeight: location.pathname === "/order_history" ? 700 : 500,

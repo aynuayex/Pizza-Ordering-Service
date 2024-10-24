@@ -2,23 +2,15 @@ import { Box, Grid, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import OrderItem from "./OrderItem";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-
-export type PopularPizzasApiResponse = {
-  id: string;
-  name: string;
-  price: number;
-  toppings: string[];
-  _count: { orders: number };
-};
+import { PizzasApiResponse } from "@/types";
 
 const PopularPizzas = () => {
   const axiosPrivate = useAxiosPrivate();
-  const timesToDisplay = [1, 2, 3, 4, 5, 6];
 
   const pizzaMenu = useQuery({
     queryKey: ["popular-pizzas"],
     queryFn: async () => {
-      const response = await axiosPrivate.get<PopularPizzasApiResponse[]>("/menu/popular");
+      const response = await axiosPrivate.get<PizzasApiResponse[]>("/menu/popular");
       return response.data;
     },
   });
@@ -31,13 +23,11 @@ const PopularPizzas = () => {
         bgcolor: "#FFF8F1",
         px: "89px",
         mt: -10,
-        // position: "relative",
         pb: "50px",
       }}
     >
       <Typography
         sx={{
-          fontFamily: "Inter",
           fontSize: "50px",
           fontWeight: 500,
           lineHeight: "75px",
@@ -54,13 +44,8 @@ const PopularPizzas = () => {
           <Grid
             item
             key={item.id}
-            // key={item}
             xs={12}
             md={4}
-            // sx={{
-            //   display: item.length < 4 ? "block" : { xs: "none", md: "block" }, // Show only 3 items on mobile, all 6 on desktop
-            //   // display: item < 4 ? "block" : { xs: "none", md: "block" }, // Show only 3 items on mobile, all 6 on desktop
-            // }}
           >
             <OrderItem pizza={item} />
           </Grid>

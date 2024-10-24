@@ -3,10 +3,9 @@ import { Box, Button, Divider, Typography } from "@mui/material";
 import female from "@/assets/female.svg";
 import pizza_slice_egg_full from "@/assets/pizza_slice_egg_full.png";
 import { useNavigate } from "react-router-dom";
-import { PopularPizzasApiResponse } from "./PopularPizzas";
-import { FastingPizzasApiResponse } from "./Fasting";
+import { PizzasApiResponse } from "@/types";
 
-const OrderItem = ({pizza}: {pizza: PopularPizzasApiResponse | FastingPizzasApiResponse}) => {
+const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
   const navigate = useNavigate();
   return (
     <Box
@@ -88,7 +87,18 @@ const OrderItem = ({pizza}: {pizza: PopularPizzasApiResponse | FastingPizzasApiR
               color: "#000000BF",
             }}
           >
-            Tomato, Mozzarella, Bell Peppers, Onions, Olives
+            {pizza?.toppings
+              .map((topping) =>
+                topping
+                  .split("_")
+                  .map((word) => {
+                    return (
+                      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                    );
+                  })
+                  .join(" ")
+              )
+              .join(", ")}
           </Typography>
           <Box
             height="66px"
@@ -114,7 +124,7 @@ const OrderItem = ({pizza}: {pizza: PopularPizzasApiResponse | FastingPizzasApiR
                   color: "#01C550",
                 }}
               >
-                150
+                {pizza?.price}
               </Typography>
               <Typography
                 sx={{
@@ -132,7 +142,7 @@ const OrderItem = ({pizza}: {pizza: PopularPizzasApiResponse | FastingPizzasApiR
               </Typography>
             </Box>
             <Button
-              onClick={() => navigate("/order", {state: {pizza}})}
+              onClick={() => navigate("/order", { state: { pizza } })}
               variant="contained"
               sx={{
                 width: "188px",
@@ -182,7 +192,12 @@ const OrderItem = ({pizza}: {pizza: PopularPizzasApiResponse | FastingPizzasApiR
             color: "#000000BF",
           }}
         >
-          Azmera Pizza
+          {pizza.createdBy.fullName
+            .split(" ")
+            .map((word) => {
+              return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            })
+            .join(" ")}
         </Typography>
       </Box>
     </Box>

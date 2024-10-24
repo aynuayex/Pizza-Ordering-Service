@@ -15,8 +15,7 @@ import OrderHistory from "./pages/OrderHistory";
 import DashboardLayout from "./Layouts/DashboardLayout";
 import Menus from "./pages/Menus";
 import Orders from "./pages/Orders";
-// import Roles from "./pages/Roles";
-import Roles from "./pages/RolesQuery";
+import Roles from "./pages/Roles";
 import Users from "./pages/Users";
 import RegisterRestaurant from "./pages/RegisterRestaurant";
 import AddAdmin from "./pages/AddAdmin";
@@ -29,7 +28,11 @@ const router = createBrowserRouter(
       <Route path="/sign-in" element={<Login />} />
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Home />} />
-        <Route path="order_history" element={<OrderHistory />} />
+        <Route element={<PersistLogin />}>
+          <Route element={<RequireAuth />}>
+            <Route path="order_history" element={<OrderHistory />} />
+          </Route>
+        </Route>
       </Route>
       <Route element={<PersistLogin />}>
         <Route element={<RequireAuth />}>
@@ -45,18 +48,6 @@ const router = createBrowserRouter(
             <Route path="role" element={<Roles />} />
             <Route path="user" element={<Users />} />
           </Route>
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-            {/* <Route element={<PersistLogin />}>
-          <Route element={<RequireAuth />}>
-            {/* <Route path="/" element={<App />}> */}
-              {/* 
-              <Route path="books" element={<Books />} />
-              <Route path="owners" element={<Owners />} />
-              <Route path="book_upload" element={<BookUpload />} />
-              <Route path="book_upload" element={<BookUpload2 />} /> */}
-              {/* </Route> */}
-              {/* </Route>
-          /Route> */}
         </Route>
       </Route>
     </Route>

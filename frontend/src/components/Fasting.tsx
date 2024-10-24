@@ -5,14 +5,7 @@ import "react-multi-carousel/lib/styles.css";
 import OrderItem from "./OrderItem";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-
-export type FastingPizzasApiResponse = {
-  id: string;
-  name: string;
-  price: number;
-  toppings: string[];
-  _count: { orders: number };
-};
+import { PizzasApiResponse } from "@/types";
 
 const responsive = {
   superLargeDesktop: {
@@ -36,12 +29,11 @@ const responsive = {
 
 const Fasting = () => {
   const axiosPrivate = useAxiosPrivate();
-  const timesToDisplay = [1, 2, 3, 4, 5];
 
   const fastingPizza = useQuery({
     queryKey: ["fasting-pizzas"],
     queryFn: async () => {
-      const response = await axiosPrivate.get<FastingPizzasApiResponse[]>("/menu/fasting");
+      const response = await axiosPrivate.get<PizzasApiResponse[]>("/menu/popular");
       return response.data;
     },
   });
@@ -54,20 +46,15 @@ const Fasting = () => {
         background: "#FFF8F1",
         pl: "121px",
         pr: "89px",
-        // position: "relative",
-        // mb: 10,
         pb: 10,
       }}
     >
       <Typography
         sx={{
-          fontFamily: "Inter",
           fontSize: "50px",
           fontWeight: 500,
           lineHeight: "75px",
           color: "#00000080",
-          // ml: 5,
-          // pt: 13,
           textAlign: "left",
         }}
         gutterBottom

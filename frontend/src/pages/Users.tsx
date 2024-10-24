@@ -41,7 +41,8 @@ import Toast from "@/components/Toast";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { addAdminSchema, AddAdminSchema } from "@/schema/addAdminSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RoleApiResponse } from "./RolesQuery";
+import { RoleApiResponse } from "./Roles";
+import { User } from "@/types";
 
 type UserApiResponse = {
   data: Array<User>;
@@ -49,25 +50,7 @@ type UserApiResponse = {
     totalRowCount: number;
   };
 };
-
-type User = {
-  id: string;
-  fullName: string;
-  email: string;
-  password: string;
-  location: string;
-  phoneNumber: string;
-  refreshToken: string;
-  // please check here to make the value to be stringified before sending
-  //  as a json resp, otherwise error with exporting to csv
-  // refreshToken: string[];
-  active: boolean;
-  roleId: string;
-  createdAt: string;
-  updatedAt: string;
-  restaurantId: string;
-};
-
+  
 const csvConfig = mkConfig({
   fieldSeparator: ",",
   decimalSeparator: ".",

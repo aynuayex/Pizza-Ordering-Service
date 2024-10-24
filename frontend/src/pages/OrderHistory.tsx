@@ -1,15 +1,42 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Link, Typography } from "@mui/material";
 
 import pizza_slice_egg_full from "@/assets/pizza_slice_egg_full.png";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { useQuery } from "@tanstack/react-query";
+import { Link as RouterLink } from "react-router-dom";
+import { Order } from "@/types";
+import Toast from "@/components/Toast";
+
+type OrderHistoryApiResponse = {
+  orderHistory: Order[];
+};
 
 const OrderHistory = () => {
-  const timesToDisplay = [1, 2, 3, 4, 5, 6];
+  const axiosPrivate = useAxiosPrivate();
+
+  const { data, isError, isSuccess } = useQuery({
+    queryKey: ["ordering-history"],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<OrderHistoryApiResponse>(
+        "/order/history"
+      );
+      return response.data;
+    },
+  });
+
+  console.log({ data });
+  if (isError) {
+    <Toast
+      message="There is an Error fetching order History, please try later!"
+      severity="error"
+    />;
+  }
+
   return (
     <Box
       sx={{
         bgcolor: "#FFF8F1",
         px: "89px",
-        // position: "relative",
         pb: "50px",
       }}
     >
@@ -27,20 +54,45 @@ const OrderHistory = () => {
       >
         Order History
       </Typography>
+      {isSuccess && !data.orderHistory?.length && (
+        <Box
+          sx={{
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            m: 24,
+          }}
+        >
+          <Typography mb={"-6px"}>
+            {" "}
+            You have not ordered any pizza yet, go to{" "}
+            <Link
+              color="#FF8100"
+              underline="none"
+              component={RouterLink}
+              to="/"
+            >
+              Home
+            </Link>{" "}
+            page and Order One.
+          </Typography>
+        </Box>
+      )}
       <Grid container spacing="25px">
-        {timesToDisplay.map((item) => (
-          <Grid
-            item
-            key={item}
-            xs={12}
-            md={4}
-            sx={{
-              display: item < 3 ? "block" : { xs: "none", md: "block" }, // Show only 2 items on mobile, all 6 on desktop
-            }}
-          >
-            <OrderHistoryItem />
-          </Grid>
-        ))}
+        {isSuccess &&
+          data.orderHistory?.map((item, index) => (
+            <Grid
+              item
+              key={item.id}
+              xs={12}
+              md={4}
+              sx={{
+                display: index < 2 ? "block" : { xs: "none", md: "block" }, // Show only 2 items on mobile, all 6 on desktop
+              }}
+            >
+              <OrderHistoryItem order={item} />
+            </Grid>
+          ))}
       </Grid>
     </Box>
   );
@@ -48,7 +100,7 @@ const OrderHistory = () => {
 
 export default OrderHistory;
 
-const OrderHistoryItem = () => {
+const OrderHistoryItem = ({ order }: { order: Order }) => {
   return (
     <Box
       sx={{
@@ -114,7 +166,7 @@ const OrderHistoryItem = () => {
               color: "#000000",
             }}
           >
-            Margherita
+            {JSON.parse(order.pizza).name}
           </Typography>
           <Typography
             sx={{
@@ -129,7 +181,18 @@ const OrderHistoryItem = () => {
               color: "#000000BF",
             }}
           >
-            Tomato, Mozzarella, Bell Peppers, Onions, Olives
+            {JSON.parse(order.pizza)
+              ?.toppings.map((topping: string) =>
+                topping
+                  .split("_")
+                  .map((word) => {
+                    return (
+                      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                    );
+                  })
+                  .join(" ")
+              )
+              .join(", ")}
           </Typography>
           <Box
             width={"327px"}
@@ -156,7 +219,7 @@ const OrderHistoryItem = () => {
                   color: "#01C550",
                 }}
               >
-                150
+                {JSON.parse(order.pizza).price}
               </Typography>
               <Typography
                 sx={{
@@ -183,12 +246,10 @@ const OrderHistoryItem = () => {
                 lineHeight: "46.3px",
                 letterSpacing: "0.03em",
                 padding: "10px 20px 10px 20px",
-                color: "#FFA500",
-                // color: "#008000",
+                color: order.status === "Delivered" ? "#008000" : "#FFA500",
               }}
             >
-              Ordered
-              {/* Received */}
+              {order.status === "Delivered" ? "Received" : "Ordered"}
             </Typography>
           </Box>
         </Box>

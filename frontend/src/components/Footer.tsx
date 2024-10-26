@@ -12,26 +12,28 @@ const Footer = () => {
         boxSizing: "border-box",
         bgcolor: "#000",
         width: "100%",
-        height: "104px",
+        height: { xs: "162px", md: "104px" },
         display: "flex",
-        justifyContent: "space-around",
+        flexDirection: { xs: "column", md: "row" },
+        justifyContent: { xs: "space-evenly", md: "space-around"},
         alignItems: "center",
-        gap: "655px",
+        gap: {xs: "20px", md: "655px"},
       }}
     >
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           width: "448px",
           height: "44px",
-          gap: "38px",
+          gap: {xs: "10px", md: "38px"},
         }}
       >
         <Typography
           sx={{
             fontFamily: "Urbanist",
-            fontSize: "18px",
+            fontSize: {sx: "14px", md: "18px"},
             fontWeight: 500,
             lineHeight: "24px",
             letterSpacing: "-0.006em",
@@ -52,7 +54,7 @@ const Footer = () => {
         <Typography
           sx={{
             fontFamily: "Urbanist",
-            fontSize: "18px",
+            fontSize: {sx: "14px", md: "18px"},
             fontWeight: 500,
             lineHeight: "24px",
             letterSpacing: "-0.006em",
@@ -70,16 +72,17 @@ const Footer = () => {
           Terms & Conditions
         </Typography>
       </Box>
-      <Box sx={{
-        display: "flex",
-        justifyContent: "space-around",
-        alignItems: "center",
-        width: "238px",
-        height: "72px",
-        padding: "10px 0px",
-        gap: "10px",
-        
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+          width: "238px",
+          height: "72px",
+          padding: "10px 0px",
+          gap: "10px",
+        }}
+      >
         <IconButton
           sx={{
             width: "52px",

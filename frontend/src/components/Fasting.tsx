@@ -44,17 +44,22 @@ const Fasting = () => {
     <Box
       sx={{
         background: "#FFF8F1",
-        pl: "121px",
-        pr: "89px",
+        pl: {xs: "20px", md: "121px"},
+        pr: {xs: "30px", md: "89px"},
         pb: 10,
       }}
     >
       <Typography
         sx={{
-          fontSize: "50px",
+          fontSize: {xs: "15px", md: "50px"},
           fontWeight: 500,
-          lineHeight: "75px",
+          lineHeight: {xs: "22.5px", md: "75px"},
           color: "#00000080",
+          
+          // pl: {xs: "8px", md: "130px"},
+          pt: {xs: 13, md: 30},
+          // pl: "20px",
+          // pt: 30,
           textAlign: "left",
         }}
         gutterBottom

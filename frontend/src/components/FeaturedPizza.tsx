@@ -41,8 +41,8 @@ const CustomDot: React.FC<DotProps> = ({ onClick, active }) => {
     <Box
       onClick={onClick}
       sx={{
-        width: "25px",
-        height: "25px",
+        width: {xs: "13px", md: "25px"},
+        height: {xs: "13px", md: "25px"},
         backgroundColor: active ? "#FF9921" : "#B6B6B6",
         borderRadius: "50%",
         mx: "27px",
@@ -63,13 +63,16 @@ const FeaturedPizza = () => {
     >
       <Typography
         sx={{
-          fontSize: "50px",
+          fontSize: {xs: "15px", md: "50px"},
           fontWeight: 500,
-          lineHeight: "75px",
+          lineHeight: {xs: "22.5px", md: "75px"},
           color: "#00000080",
-          ml: 17,
-          pt: 13,
+          pl: {xs: "8px", md: "130px"},
+          pt: {xs: 13, md: 30},
           textAlign: "left",
+          
+          // ml: 17,
+          // pt: 13,
         }}
         gutterBottom
       >
@@ -102,10 +105,10 @@ const Slider = () => {
       swipeable={true}
       draggable={true}
       responsive={responsive}
-      autoPlay={true}
-      autoPlaySpeed={1500}
-      rewind={true}
-      rewindWithAnimation={true}
+      // autoPlay={true}
+      // autoPlaySpeed={1500}
+      // rewind={true}
+      // rewindWithAnimation={true}
       showDots={true}
       renderDotsOutside={true}
       customDot={<CustomDot />}
@@ -122,11 +125,11 @@ const Slider = () => {
           <Box
             sx={{
               bgcolor: item.bgcolor,
-              width: "1266px",
-              height: " 386px",
+              width: {xs: "373.85px", md: "1266px"},
+              height: {xs: "205px", md: "386px"},
               display: "flex",
               justifyContent: "space-between",
-              borderRadius: "40px",
+              borderRadius: {xs: "15px", md: "40px"},
               overflow: "hidden",
             }}
           >
@@ -136,17 +139,17 @@ const Slider = () => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                gap: 2,
-                pl: "71.64px",
+                gap: {xs: "10px", md: 2},
+                pl: {xs: "30px", md: "71.64px"},
               }}
             >
               <Typography
                 sx={{
-                  width: "561.74px",
-                  height: "97px",
-                  fontSize: "45px",
+                  width: {xs: "192px", md: "561.74px"},
+                  height: {xs: "41px", md: "97px"},
+                  fontSize: {xs: "16px", md: "45px"},
                   fontWeight: 700,
-                  lineHeight: "43.06px",
+                  lineHeight: {xs: "15.31px", md: "43.06px"},
                   letterSpacing: "0.03em",
                   color: "white",
                 }}
@@ -155,13 +158,13 @@ const Slider = () => {
                 <Typography
                   component={"span"}
                   sx={{
-                    fontSize: "45px",
+                    fontSize: {xs: "16px", md: "45px"},
                     fontWeight: "700",
-                    lineHeight: "43.06px",
+                    lineHeight: {xs: "15.31px", md: "43.06px"},
                     letterSpacing: "0.03em",
                     textAlign: "left",
                     color: "#FF9921",
-                    ml: 7,
+                    ml: {xs: 2, md: 7},
                   }}
                 >
                   50% Off
@@ -169,15 +172,18 @@ const Slider = () => {
               </Typography>
               <Typography
                 sx={{
-                  width: "520.39px",
-                  height: "61px",
-                  fontSize: "16px",
+                  
+                  width: {xs: "192px", md: "520.39px"},
+                  height: {xs: "41px", md: "61px"},
+                  // width: "520.39px",
+                  // height: "61px",
+                  fontSize: {xs: "8px", md: "16px"},
                   fontWeight: 400,
-                  lineHeight: "23.15px",
+                  lineHeight: {xs: "11.57px", md: "23.15px"},
                   letterSpacing: "0.03em",
                   color: "white",
                   opacity: 0.9,
-                  mb: 6,
+                  mb: {xs: 2, md: 6},
                 }}
               >
                 In publishing and graphic design, Lorem ipsum is a placeholder
@@ -188,13 +194,13 @@ const Slider = () => {
               <Button 
               onClick={() => navigate("/order", {state: { pizza: pizzaMenu.isSuccess && pizzaMenu.data[index]}})}
                 sx={{
-                  width: "248.26px",
-                  height: "60px",
+                  width: {xs: "77px",md: "248.26px"},
+                  height: {xs: "33px",md: "60px"},
                   borderRadius: "5px",
                   fontFamily: "Roboto",
-                  fontSize: "24px",
+                  fontSize: {xs: "10px", md: "24px"},
                   fontWeight: 700,
-                  lineHeight: "34.72px",
+                  lineHeight: {xs: "14.47px", md: "34.72px"},
                   letterSpacing: "0.03em",
                   textTransform: "none",
                   color: "white",

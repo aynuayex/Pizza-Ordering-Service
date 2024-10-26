@@ -32,8 +32,8 @@ const RootLayout = () => {
       ) : (
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
+            // width: "100%",
+            // height: "100%",
             // zIndex: 5,  // This ensures your content is above the gradient
             // position: 'relative', // Ensure z-index works
           }}

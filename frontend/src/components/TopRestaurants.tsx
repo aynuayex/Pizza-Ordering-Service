@@ -39,6 +39,8 @@ type TopRestaurantsApiResponse = {
 const TopRestaurants = () => {
   const axiosPrivate = useAxiosPrivate();
 
+  const times = [1, 2, 3, 4, 5];
+
   const popularRestaurants = useQuery({
     queryKey: ["restaurants-top"],
     queryFn: async () => {
@@ -68,20 +70,33 @@ const TopRestaurants = () => {
     >
       <Typography
         sx={{
-          fontFamily: "Inter",
-          fontSize: "50px",
+          fontSize: {xs: "15px", md: "50px"},
           fontWeight: 500,
-          lineHeight: "75px",
+          lineHeight: {xs: "22.5px", md: "75px"},
           color: "#00000080",
-          ml: 5,
-          pt: 48,
+          // pl: "20px",
           textAlign: "left",
+
+          pl: {xs: "10px", md: 5},
+          pt: 48,
         }}
         gutterBottom
       >
         Top Restaurants
       </Typography>
-      <Box pb={20} pl={5}>
+      <Box pb={20} pl={{xs: "10px", md: 5}}>
+        {/* <Carousel
+          swipeable={true}
+          draggable={true}
+          responsive={responsive}
+          keyBoardControl={true}
+          arrows={false}
+          itemClass="carousel-item-padding"
+        >
+          {times.map((item) => (
+              <Slider key={item} />
+            ))}
+        </Carousel> */}
         <Carousel
           swipeable={true}
           draggable={true}
@@ -103,12 +118,13 @@ const TopRestaurants = () => {
 export default TopRestaurants;
 
 const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
+// const Slider = () => {
   return (
     <Box
       sx={{
-        width: "574px",
+        width: {xs: "298px", md: "574px"},
         borderRadius: "15px",
-        padding: "23px 0px 23px 31px",
+        padding: {xs: "15px", md: "23px 0px 23px 31px"},
         bgcolor: "white",
         display: "flex",
         gap: "15px",
@@ -116,8 +132,8 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
     >
       <Box
         sx={{
-          width: "235px",
-          height: "108px",
+          width: {xs: "120px", md: "235px"},
+          height: {xs: "60px", md: "108px"},
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -129,25 +145,25 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
             alignItems: "center",
             width: "191px",
             height: "50px",
-            gap: "10px",
+            gap: {xs: "5px",md: "10px"},
           }}
         >
           <Box
             component={"img"}
             src={female}
             alt="profile of female"
-            width={50}
-            height={50}
+            width={{xs: 25, md: 50}}
+            height={{xs: 25, md: 50}}
           />
           <Typography
             sx={{
               textAlign: "left",
-              width: "131px",
-              height: "19px",
+              width: {xs: "79px", md: "131px"},
+              height: {xs: "11px", md: "19px"},
               fontFamily: "Roboto",
-              fontSize: "20px",
+              fontSize: {xs: "12px", md: "20px"},
               fontWeight: 700,
-              lineHeight: "18.94px",
+              lineHeight: {xs: "11.36px", md: "18.94px"},
               letterSpacing: "0.03em",
               color: "#000000",
             }}
@@ -159,25 +175,24 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
         <Typography
           sx={{
             textAlign: "left",
-            width: "235px",
-            height: "48px",
+            width: {xs: "120px", md: "235px"},
+            height: {xs: "30px", md: "48px"},
             fontFamily: "Inter",
-            fontSize: "15px",
+            fontSize: {xs: "10px", md: "15px"},
             fontWeight: 400,
-            lineHeight: "15.75px",
+            lineHeight: {xs: "10.5px", md: "15.75px"},
             letterSpacing: "0.03em",
             color: "#00000080",
           }}
         >
-          In publishing and graphic design, Lorem ipsum is a placeholder text
-          commonly used to...
+          In publishing and graphic design, Lorem ipsum is a placeholder text<Box component="span" display={{xs: "none", md: "inline-block"}}>commonly used to</Box>...
         </Typography>
       </Box>
 
       <Box
         sx={{
-          width: "262px",
-          height: "108px",
+          width: {xs: "133px", md: "262px"},
+          height: {xs: "60px", md: "108px"},
           padding: "0px 15px",
           gap: "20px",
           borderRadius: "10px",
@@ -188,8 +203,8 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
       >
         <Box
           sx={{
-            width: "80px",
-            height: "80px",
+            width: {xs: "40px", md: "80px"},
+            height: {xs: "40px", md: "80px"},
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -199,8 +214,8 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
         >
           <Box
             sx={{
-              width: "39.27px",
-              height: "48px",
+              width: {xs: "19.64px", md: "39.27px"},
+              height: {xs: "24px", md: "48px"},
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -209,6 +224,8 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
           >
             <Box
               sx={{
+                width: {xs: "9.82px", md: "21px"},
+                height: {xs: "5.45px", md: "11px"},
                 position: "absolute",
                 top: 0,
                 left: "50%",
@@ -219,10 +236,14 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
               alt="svg of hang"
             />
 
-            <Box component={"img"} src={innerBox} alt="svg of innerBox" />
+            <Box sx={{
+                width: {xs: "17.45px", md: "52px"},
+                height: {xs: "20.18px", md: "40px"},}} component={"img"} src={innerBox} alt="svg of innerBox" />
 
             <Box
               sx={{
+                width: {xs: "7.64px", md: "16px"},
+                height: {xs: "10.91px", md: "23px"},
                 position: "absolute",
                 left: "50%",
                 top: "50%",
@@ -238,12 +259,12 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
           <Typography
             sx={{
               textAlign: "left",
-              width: "132px",
-              height: "19px",
+              width: {xs: "43px", md: "132px"},
+              height: {xs: "19px", md: "19px"},
               fontFamily: "Inter",
-              fontSize: "15px",
-              fontWeight: 500,
-              lineHeight: "11.36px",
+              fontSize: {xs: "8px", md: "15px"},
+              fontWeight: {xs: 400, md: 500},
+              lineHeight: {xs: "7.57px", md: "11.36px"},
               letterSpacing: "0.03em",
               color: "#00000080",
             }}
@@ -253,12 +274,12 @@ const Slider = ({ restaurant }: { restaurant: TopRestaurantsApiResponse }) => {
           <Typography
             sx={{
               textAlign: "left",
-              width: "64px",
-              height: "47px",
+              width: {xs: "39px", md: "64px"},
+              height: {xs: "28px", md: "47px"},
               fontFamily: "Roboto",
-              fontSize: "50px",
+              fontSize: {xs: "30px", md: "50px"},
               fontWeight: 700,
-              lineHeight: "47.34px",
+              lineHeight: {xs: "28.41px", md: "47.34px"},
               letterSpacing: "0.03em",
               color: "#FF8100",
             }}

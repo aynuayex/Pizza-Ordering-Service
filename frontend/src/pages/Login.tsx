@@ -136,8 +136,8 @@ function Login() {
         </Snackbar>
         <Box
           sx={{
+            display: { xs: "none", md: "flex" },
             width: "50%",
-            display: "flex",
             justifyContent: "center",
             alignItems: "center",
             bgcolor: "#FF9921",
@@ -154,13 +154,15 @@ function Login() {
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           sx={{
-            width: "50%",
+            width: { xs: "100%", md: "50%" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             gap: 2,
             bgcolor: "white",
-            p: 8,
+            px: {xs: 3, md: 8},
+            pb: {xs: 3, md: 8},
+            pt: 0
           }}
         >
           <Stack direction={"row"} spacing={1} mb={3}>
@@ -271,7 +273,7 @@ function Login() {
               color="#FF8100"
               underline="none"
               component={RouterLink}
-              to="/"
+              to="/sign-up"
             >
               {" "}
               Sign up

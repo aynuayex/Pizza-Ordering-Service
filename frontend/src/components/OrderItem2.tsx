@@ -147,7 +147,7 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               </Typography>
             </Box>
             <Button
-              // onClick={() => navigate("/order", { state: { pizza } })}
+              onClick={() => navigate("/order", { state: { pizza } })}
               variant="contained"
               sx={{
                 width: { xs: "169px", md: "188px" },

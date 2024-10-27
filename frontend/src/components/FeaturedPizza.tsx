@@ -105,10 +105,10 @@ const Slider = () => {
       swipeable={true}
       draggable={true}
       responsive={responsive}
-      // autoPlay={true}
-      // autoPlaySpeed={1500}
-      // rewind={true}
-      // rewindWithAnimation={true}
+      autoPlay={true}
+      autoPlaySpeed={1500}
+      rewind={true}
+      rewindWithAnimation={true}
       showDots={true}
       renderDotsOutside={true}
       customDot={<CustomDot />}

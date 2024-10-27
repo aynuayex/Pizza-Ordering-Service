@@ -77,7 +77,7 @@ const Order = () => {
     defaultValues: {
       toppings: pizza.toppings.map((topping) => ({
         name: topping.split(" ").join("_"),
-        checked: false, 
+        checked: false,
       })),
     },
   });
@@ -104,7 +104,7 @@ const Order = () => {
   };
 
   return (
-    <Box>
+    <Box width="100vw">
       <Modal
         open={open}
         setOpen={setOpen}
@@ -112,24 +112,25 @@ const Order = () => {
       />
       <Box
         sx={{
+          width: "100%",
           display: "flex",
-          gap: "70px",
+          flexDirection: { xs: "column", md: "row" },
+          gap: { xs: "25px", md: "70px" },
           bgcolor: "#FFF8F1",
           height: "500px",
-          padding: "51px 51px 0px 51px",
+          padding: { xs: "14px", md: "51px 51px 0px 51px" },
         }}
       >
         <Box
           sx={{
             display: "flex",
-
             gap: "40px",
           }}
         >
           <Box
             sx={{
-              width: "500px",
-              height: "500px",
+              width: { xs: "220px", md: "500px" },
+              height: { xs: "220px", md: "500px" },
               borderRadius: "50%",
               background: "#EA810033",
               position: "relative",
@@ -137,11 +138,11 @@ const Order = () => {
           >
             <Box
               sx={{
-                width: "440px",
-                height: "440px",
+                width: { xs: "200px", md: "440px" },
+                height: { xs: "200px", md: "440px" },
                 position: "absolute",
-                top: "50px",
-                left: "50px",
+                top: { xs: "15px", md: "50px" },
+                left: { xs: "15px", md: "50px" },
               }}
               component={"img"}
               src={pizza_slice_egg_full}
@@ -157,17 +158,17 @@ const Order = () => {
           >
             <Box
               sx={{
-                width: "208px",
-                height: "208px",
+                width: { xs: "100px", md: "208px" },
+                height: { xs: "100px", md: "208px" },
                 borderRadius: "50%",
-                background: "#D9D9D9",
+                background: {xs: "#EA810033", md: "#D9D9D9"},
                 position: "relative",
               }}
             >
               <Box
                 sx={{
-                  width: "193px",
-                  height: "196px",
+                  width: { xs: "83px", md: "193px" },
+                  height: { xs: "85px", md: "196px" },
                   position: "absolute",
                   top: "12px",
                   left: "12px",
@@ -180,17 +181,17 @@ const Order = () => {
 
             <Box
               sx={{
-                width: "208px",
-                height: "208px",
+                width: { xs: "100px", md: "208px" },
+                height: { xs: "100px", md: "208px" },
                 borderRadius: "50%",
-                background: "#0201014D",
+                background: {xs: "#693A0070", md: "#0201014D"},
                 position: "relative",
               }}
             >
               <Box
                 sx={{
-                  width: "173px",
-                  height: "176px",
+                  width: { xs: "73px", md: "173px" },
+                  height: { xs: "73px", md: "176px" },
                   position: "absolute",
                   top: "16px",
                   left: "16px",
@@ -202,13 +203,14 @@ const Order = () => {
             </Box>
           </Box>
         </Box>
+
         <Box
           component={"form"}
           onSubmit={handleSubmit(onSubmit)}
           sx={{
-            width: "522px",
-            height: "203px",
-            my: "60px",
+            width: { xs: "100%", md: "522px" },
+            height: { xs: "296px", md: "203px" },
+            my: { xs: 0, md: "60px" },
             display: "flex",
             flexDirection: "column",
             gap: "20px",
@@ -218,10 +220,9 @@ const Order = () => {
             sx={{
               width: "418px",
               height: "76px",
-              fontFamily: "Roboto",
-              fontSize: "80px",
+              fontSize: { xs: "35px", md: "80px" },
               fontWeight: 700,
-              lineHeight: "75.75px",
+              lineHeight: { xs: "33.14px", md: "75.75px" },
               letterSpacing: "0.03em",
               color: "#000",
             }}
@@ -233,9 +234,9 @@ const Order = () => {
             name="toppings"
             control={control}
             render={({ field: { value = [], onChange } }) => (
-              <Grid container spacing="5px">
+              <Grid container spacing={{xs: 0, md: "5px"}}>
                 {pizza.toppings.map((topping, index) => (
-                  <Grid item key={topping}>
+                  <Grid item xs={4} key={topping}>
                     <FormControl error={!!errors.toppings?.[index]?.checked}>
                       <FormControlLabel
                         label={topping
@@ -259,7 +260,7 @@ const Order = () => {
                               onChange(updatedToppings);
                             }}
                             disabled={isSubmitting}
-                            size="large"
+                            size={"large"}
                             sx={{
                               "&.Mui-checked": {
                                 color: "#FF8100",
@@ -292,7 +293,7 @@ const Order = () => {
                 count > 0 && setCount((prevCount) => prevCount - 1)
               }
               sx={{
-                width: "70px",
+                width: { xs: "60px", md: "70px" },
                 height: "60px",
                 padding: "10px 15px 10px 15px",
                 gap: "8px",
@@ -304,10 +305,6 @@ const Order = () => {
               <Box
                 sx={{
                   width: "23.33px",
-                  // height: "440px",
-                  // position: "absolute",
-                  // top: "50px",
-                  // left: "50px",
                 }}
                 component={"img"}
                 src={minus}
@@ -318,7 +315,6 @@ const Order = () => {
               sx={{
                 width: "9px",
                 height: "42px",
-                fontFamily: "DM Sans",
                 fontSize: "32px",
                 fontWeight: 400,
                 lineHeight: "41.66px",
@@ -332,7 +328,7 @@ const Order = () => {
               onClick={() => setCount((prevCount) => prevCount + 1)}
               sx={{
                 position: "relative",
-                width: "70px",
+                width: { xs: "60px", md: "70px" },
                 height: "60px",
                 padding: "10px 15px 10px 15px",
                 gap: "8px",
@@ -369,7 +365,6 @@ const Order = () => {
               <Typography
                 sx={{
                   textAlign: "left",
-                  fontFamily: "Roboto",
                   fontSize: "45px",
                   fontWeight: 700,
                   lineHeight: "44.55px",
@@ -383,7 +378,6 @@ const Order = () => {
                 sx={{
                   alignSelf: "start",
                   width: "25px",
-                  fontFamily: "Roboto",
                   fontSize: "15px",
                   fontWeight: 400,
                   lineHeight: "14.85px",
@@ -399,8 +393,8 @@ const Order = () => {
             type="submit"
             variant="contained"
             sx={{
-              width: "522px",
-              height: "76px",
+              width: { xs: "384px", md: "522px" },
+              height: { xs: "66px", md: "76px" },
               display: "flex",
               justifyContent: "space-between",
               padding: "15px 30px 15px 30px",
@@ -413,7 +407,6 @@ const Order = () => {
               sx={{
                 width: "95px",
                 height: "46px",
-                fontFamily: "Inter",
                 fontSize: "32px",
                 fontWeight: 700,
                 lineHeight: "46.3px",
@@ -428,25 +421,26 @@ const Order = () => {
       </Box>
       <Box
         sx={{
+          width: "100%",
           background: "#FFF8F1",
-          pt: "96px",
-          px: "89px",
+          pt: { xs: "130px", md: "96px" },
+          px: { xs: "20px", md: "89px" },
         }}
       >
         <Typography
           sx={{
-            fontFamily: "Inter",
-            fontSize: "50px",
+            fontSize: { xs: "15px", md: "50px" },
             fontWeight: 500,
-            lineHeight: "75px",
+            lineHeight: { xs: "22.5px", md: "75px" },
             color: "#00000080",
+            pl: { xs: "5px", md: "20px" },
             textAlign: "left",
           }}
           gutterBottom
         >
           Related
         </Typography>
-        <Box pb={20}>
+        <Box pb={{xs: 5, md: 20}}>
           <Carousel
             swipeable={true}
             draggable={true}
@@ -457,7 +451,8 @@ const Order = () => {
           >
             {pizzaMenu.isSuccess &&
               pizzaMenu.data
-                .filter((item) => item.id !== pizza.id).slice(0,5)
+                .filter((item) => item.id !== pizza.id)
+                .slice(0, 5)
                 .map((item) => <RelatedOrderItem key={item.id} pizza={item} />)}
           </Carousel>
         </Box>
@@ -475,9 +470,9 @@ const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
     <Box
       sx={{
         boxSizing: "border-box",
-        width: "387px",
-        height: "450px",
-        padding: "30px",
+        width: { xs: "273px", md: "387px" },
+        height: { xs: "321px", md: "450px" },
+        padding: { xs: "20px", md: "30px" },
         display: "flex",
         flexDirection: "column",
         gap: "15px",
@@ -489,8 +484,8 @@ const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
         component={ButtonBase}
         onClick={() => navigate("/order", { state: { pizza } })}
         sx={{
-          width: "327px",
-          height: "466px",
+          width: { xs: "233px", md: "327px" },
+          height: { xs: "321px", md: "466px" },
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -498,8 +493,8 @@ const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
       >
         <Box
           sx={{
-            width: "318px",
-            height: "318px",
+            width: { xs: "233px", md: "318px" },
+            height: { xs: "233px", md: "318px" },
             borderRadius: "50%",
             background: "#EA810033",
             position: "relative",
@@ -507,11 +502,11 @@ const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
         >
           <Box
             sx={{
-              width: "272.83",
-              height: "276.95",
+              width: { xs: "233px", md: "278.83px" },
+              height: { xs: "233px", md: "282.95px" },
               position: "absolute",
-              top: "12px",
-              left: "12px",
+              top: { xs: "10px", md: "23px" },
+              left: { xs: "10px", md: "25px" },
             }}
             component={"img"}
             src={pizza_slice_egg_full}
@@ -529,10 +524,9 @@ const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
             sx={{
               textAlign: "center",
               height: "24px",
-              fontFamily: "Roboto",
-              fontSize: "25px",
+              fontSize: { xs: "20px", md: "25px" },
               fontWeight: 700,
-              lineHeight: "23.67px",
+              lineHeight: { xs: "18.94px", md: "23.67px" },
               letterSpacing: "0.03em",
               color: "#000000",
             }}
@@ -544,10 +538,9 @@ const RelatedOrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               textAlign: "center",
               width: "307px",
               height: "28px",
-              fontFamily: "Roboto",
-              fontSize: "15px",
+              fontSize: { xs: "10px", md: "15px" },
               fontWeight: 400,
-              lineHeight: "14.2px",
+              lineHeight: { xs: "9.47px", md: "14.2px" },
               letterSpacing: "0.03em",
               color: "#000000BF",
             }}

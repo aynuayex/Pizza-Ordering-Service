@@ -36,20 +36,19 @@ const OrderHistory = () => {
     <Box
       sx={{
         bgcolor: "#FFF8F1",
-        px: "89px",
+        px: { xs: "0px", md: "89px" },
         pb: "50px",
       }}
     >
       <Typography
         sx={{
-          fontFamily: "Inter",
-          fontSize: "50px",
-          fontWeight: 500,
-          lineHeight: "75px",
-          color: "#00000080",
-          pl: "25px",
-          pt: 13,
-          textAlign: "left",
+          fontSize: { xs: "15px", md: "50px" },
+            fontWeight: 500,
+            lineHeight: { xs: "22.5px", md: "75px" },
+            color: "#00000080",
+            pl: { xs: "25px", md: "20px" },
+            pt: {xs: 6, md: 13},
+            textAlign: "left",
         }}
       >
         Order History
@@ -105,8 +104,8 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
     <Box
       sx={{
         boxSizing: "border-box",
-        width: "387px",
-        height: "526px",
+        width: {xs: "328px", md: "387px"},
+        height: {xs: "417px", md: "526px"},
         padding: "30px",
         display: "flex",
         flexDirection: "column",
@@ -117,8 +116,8 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
     >
       <Box
         sx={{
-          width: "327px",
-          height: "466px",
+          width: {xs: "309px", md: "327px"},
+          height: {xs: "357px", md: "466px"},
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -126,8 +125,8 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
       >
         <Box
           sx={{
-            width: "318px",
-            height: "318px",
+            width: {xs: "215px", md: "318px"},
+            height: {xs: "215px", md: "318px"},
             borderRadius: "50%",
             background: "#EA810033",
             position: "relative",
@@ -135,11 +134,11 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
         >
           <Box
             sx={{
-              width: "272.83",
-              height: "276.95",
+              width: {xs: "199px", md: "272.83px"},
+              height: {xs: "199px", md: "276.95px"},
               position: "absolute",
-              top: "12px",
-              left: "12px",
+              top: { xs: "10px", md: "30px" },
+              left: { xs: "15px", md: "30px" },
             }}
             component={"img"}
             src={pizza_slice_egg_full}
@@ -155,28 +154,26 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
           <Typography
             mt={1}
             sx={{
-              textAlign: "left",
               width: "131px",
               height: "24px",
-              fontFamily: "Roboto",
-              fontSize: "25px",
+              fontSize: { xs: "20px", md: "25px" },
               fontWeight: 700,
-              lineHeight: "23.67px",
+              lineHeight: { xs: "18.94px", md: "23.67px" },
               letterSpacing: "0.03em",
-              color: "#000000",
+              color: "#000",
             }}
           >
             {JSON.parse(order.pizza).name}
           </Typography>
           <Typography
             sx={{
+              
               textAlign: "left",
               width: "307px",
               height: "28px",
-              fontFamily: "Roboto",
-              fontSize: "15px",
+              fontSize: { xs: "10px", md: "15px" },
               fontWeight: 400,
-              lineHeight: "14.2px",
+              lineHeight: { xs: "9.47px", md: "14.2px" },
               letterSpacing: "0.03em",
               color: "#000000BF",
             }}
@@ -195,7 +192,7 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
               .join(", ")}
           </Typography>
           <Box
-            width={"327px"}
+            width={{xs: "309px", md: "327px"}}
             height="66px"
             display={"flex"}
             justifyContent={"space-between"}
@@ -210,11 +207,11 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
             >
               <Typography
                 sx={{
+                  
                   textAlign: "left",
-                  fontFamily: "Roboto",
-                  fontSize: "45px",
+                  fontSize: {xs: "30px", md: "45px"},
                   fontWeight: 700,
-                  lineHeight: "44.55px",
+                  lineHeight: {xs: "29.7px", md: "44.55px"},
                   letterSpacing: "0.03em",
                   color: "#01C550",
                 }}
@@ -225,7 +222,6 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
                 sx={{
                   alignSelf: "start",
                   width: "25px",
-                  fontFamily: "Roboto",
                   fontSize: "15px",
                   fontWeight: 400,
                   lineHeight: "14.85px",
@@ -239,8 +235,6 @@ const OrderHistoryItem = ({ order }: { order: Order }) => {
             <Typography
               sx={{
                 boxSizing: "border-box",
-                width: "188px",
-                fontFamily: "Inter",
                 fontSize: "32px",
                 fontWeight: 700,
                 lineHeight: "46.3px",

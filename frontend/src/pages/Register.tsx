@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  Divider,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -211,8 +212,8 @@ function Register() {
 
         <Box
           sx={{
+            display: { xs: "none", md: "flex" },
             width: "50%",
-            display: "flex",
             justifyContent: "center",
             alignItems: "center",
             bgcolor: "#FF9921",
@@ -229,16 +230,18 @@ function Register() {
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           sx={{
-            width: "50%",
+            width: { xs: "100%", md: "50%" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             gap: 2,
             bgcolor: "white",
-            p: 8,
+            px: {xs: 3, md: 8},
+            pb: {xs: 3, md: 8},
+            pt: {xs: 0, md: 8}
           }}
         >
-          <Stack direction={"row"} spacing={1} mb={4}>
+          <Stack direction={"row"} spacing={1} mb={{xs: 0, md: 3}}>
             <img
               src={navbar_logo}
               alt="medium pizza slice image"
@@ -254,10 +257,15 @@ function Register() {
               Pizza
             </Typography>
           </Stack>
-          {/* <Typography variant="h5" sx={{ mb: -1 }}>
-            Signup as Owner
-          </Typography>
-          <Divider sx={{ mb: 3 }} /> */}
+          <Box display={{ xs: "block", md: "none" }}>
+            <Typography
+              variant="h5"
+              // sx={{ mb: -1 }}
+            >
+              Signup
+            </Typography>
+            <Divider sx={{ mt: 1, mb: 0 }} />
+          </Box>
 
           <Controller
             name="fullName"
@@ -429,6 +437,8 @@ function Register() {
 
           <LoadingButton
             sx={{
+              mt: {xs: -2, md: 0},
+              mb: {xs: -1, md: 0},
               bgcolor: "#FF8100",
             }}
             type="submit"
@@ -437,7 +447,11 @@ function Register() {
           >
             Sign up
           </LoadingButton>
-          <Typography variant="subtitle2" textAlign={"center"}>
+          <Typography
+            // display={{ xs: "none", md: "block" }}
+            variant="subtitle2"
+            textAlign={"center"}
+          >
             Already have an account?
             <Link
               color="#FF8100"

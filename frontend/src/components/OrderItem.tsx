@@ -147,7 +147,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               sx={{
                 width: {xs: "169px", md: "188px"},
                 height: {xs: "56px", md: "66px"},
-                // fontFamily: "Inter",
                 fontSize: { xs: "25px", md: "32px"},
                 fontWeight: 700,
                 lineHeight: { xs: "36.17px", md: "46.3px"},

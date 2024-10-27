@@ -85,8 +85,16 @@ const PopularPizzas = () => {
         sx={{ "& .MuiGrid-item": { paddingLeft: { xs: "0px", md: "25px" } } }}
       >
         {pizzaMenu.isSuccess &&
-          pizzaMenu.data.map((item) => (
-            <Grid item key={item.id} xs={12} md={4}>
+          pizzaMenu.data.map((item, index) => (
+            <Grid
+              item
+              key={item.id}
+              xs={12}
+              md={4}
+              sx={{
+                display: index < 3 ? "block" : { xs: "none", md: "block" }, // Show only 3 items on mobile, all 6 on desktop
+              }}
+            >
               <OrderItem pizza={item} />
             </Grid>
           ))}

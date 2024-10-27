@@ -273,7 +273,8 @@ function Login() {
               color="#FF8100"
               underline="none"
               component={RouterLink}
-              to="/sign-up"
+              // to="/sign-up"
+              to="/dashboard"
             >
               {" "}
               Sign up

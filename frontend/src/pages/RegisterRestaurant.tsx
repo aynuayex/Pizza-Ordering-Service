@@ -138,88 +138,11 @@ function RegisterRestaurant() {
             {errMsg}
           </Alert>
         </Snackbar>
-        {/* 
-        <Dialog
-          PaperProps={{
-            sx: {
-              borderRadius: 6,
-            },
-          }}
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-        >
-          <DialogContent>
-            <Box
-              sx={{
-                fontsize: "30px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src={smile}
-                  alt="success smile image"
-                  width={50}
-                  height={50}
-                />
-              </Box>
-              <Typography
-                gutterBottom
-                sx={{
-                  color: "black",
-                  fontSize: "18px",
-                  fontWeight: 600,
-                  lineHeight: "21.78px",
-                }}
-              >
-                Congrats!
-              </Typography>
-              <Typography
-                sx={{
-                  color: "black",
-                  opacity: 0.5,
-                  fontSize: "12px",
-                  fontWeight: 400,
-                  lineHeight: "14.52px",
-                }}
-              >
-                You are registered successfully!Wait until we approve your
-                account.
-              </Typography>
-            </Box>
-          </DialogContent>
-          <DialogActions
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              sx={{ width: "100px", bgcolor: "primary.light", mb: 2 }}
-              autoFocus
-              onClick={() => setOpenDialog(false)}
-              variant="contained"
-            >
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog> */}
 
         <Box
           sx={{
+            display: { xs: "none", md: "flex" },
             width: "50%",
-            display: "flex",
             justifyContent: "center",
             alignItems: "center",
             bgcolor: "#FF9921",
@@ -236,13 +159,15 @@ function RegisterRestaurant() {
           component="form"
           onSubmit={handleSubmit(onSubmit)}
           sx={{
-            width: "50%",
+            width: { xs: "100%", md: "50%" },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             gap: 2,
             bgcolor: "white",
-            p: 8,
+            px: {xs: 3, md: 8},
+            pb: {xs: 3, md: 8},
+            pt: {xs: 0, md: 8}
           }}
         >
           <Stack direction={"row"} spacing={1} mb={2}>

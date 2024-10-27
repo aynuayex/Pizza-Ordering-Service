@@ -34,11 +34,12 @@ const router = createBrowserRouter(
           </Route>
         </Route>
       </Route>
+          <Route path="/dashboard" element={<RegisterRestaurant />} />
       <Route element={<PersistLogin />}>
         <Route element={<RequireAuth />}>
           <Route path="/order" element={<Order />} />
 
-          <Route path="/dashboard" element={<RegisterRestaurant />} />
+          {/* <Route path="/dashboard" element={<RegisterRestaurant />} /> */}
           <Route path="/add_admin" element={<AddAdmin />} />
 
           <Route path="/dashboard/layout" element={<DashboardLayout />}>

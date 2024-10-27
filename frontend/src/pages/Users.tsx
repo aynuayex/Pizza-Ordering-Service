@@ -186,7 +186,7 @@ const Users = () => {
     setValue("email", user.email);
     setValue("phoneNumber", user.phoneNumber);
     setValue("location", user.location);
-    setValue("password", user.password);
+    // setValue("password", user.password);
     setValue("roleId", user.roleId);
     setOpenFormDialog(true);
   };
@@ -314,7 +314,6 @@ const Users = () => {
             width: "112px",
             height: "30px",
             padding: "7px 16.6px 8px 17.4px",
-            fontFamily: "Inter",
             fontSize: "12px",
             fontWeight: 400,
             lineHeight: "14.52px",
@@ -708,7 +707,6 @@ const Users = () => {
               sx={{
                 textTransform: "none",
                 bgcolor: "#FF8100",
-                // fontFamily: "Roboto",
                 fontSize: "22px",
                 fontWeight: 400,
                 lineHeight: "24px",

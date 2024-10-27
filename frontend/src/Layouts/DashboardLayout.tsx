@@ -21,6 +21,7 @@ import {
   ListItemText,
   Button,
   Badge,
+  useMediaQuery,
 } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 
@@ -123,11 +124,16 @@ const Drawer = styled(MuiDrawer, {
 export default function DashboardLayout() {
   const [open, setOpen] = useState(true);
   const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down("sm"));
 
   const location = useLocation();
   const navigate = useNavigate();
   const { setAuth } = useAuth();
   const logOut = useLogOut();
+
+  useEffect(() => {
+    matches && setOpen(false);
+  }, []);
 
   // useEffect(() => {
   //   if (location.pathname === "/dashboard") {
@@ -135,7 +141,7 @@ export default function DashboardLayout() {
   //     return;
   //   }
   // }, [])
-  
+
   const list = [
     {
       text: "Orders",
@@ -246,7 +252,6 @@ export default function DashboardLayout() {
               component="div"
               color="#000"
               sx={{
-                fontFamily: "Inter",
                 fontSize: "22px",
                 fontWeight: "500",
                 lineHeight: "26.63px",
@@ -286,7 +291,6 @@ export default function DashboardLayout() {
         <DrawerHeader>
           <Typography
             sx={{
-              fontFamily: "Inter",
               fontSize: "14px",
               fontWeight: "500",
               lineHeight: "16.94px",
@@ -378,7 +382,6 @@ export default function DashboardLayout() {
                     borderRadius: "3px",
                     "& .MuiTypography-root": {
                       textAlign: "left",
-                      fontFamily: "Inter",
                       fontSize: "16px",
                       fontWeight: 500,
                       lineHeight: "16.94px",
@@ -435,11 +438,16 @@ export default function DashboardLayout() {
           ))}
         </List>
         <Divider color="#F8F8F8" sx={{ opacity: 0.4 }} />
+
+        <IconButton sx={{color: "#FF0000", display: {xs: "block", md: "none"}}} onClick={() => handleLogout(undefined)}>
+          <LogoutOutlinedIcon color="inherit" />
+        </IconButton>
+
         <Button
           onClick={() => handleLogout(undefined)}
           sx={{
+            display: {xs: "none", md: "flex"},
             textTransform: "none",
-            fontFamily: "Inter",
             fontSize: "18px",
             fontWeight: 500,
             lineHeight: "24px",

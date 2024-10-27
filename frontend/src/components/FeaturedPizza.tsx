@@ -197,7 +197,6 @@ const Slider = () => {
                   width: {xs: "77px",md: "248.26px"},
                   height: {xs: "33px",md: "60px"},
                   borderRadius: "5px",
-                  fontFamily: "Roboto",
                   fontSize: {xs: "10px", md: "24px"},
                   fontWeight: 700,
                   lineHeight: {xs: "14.47px", md: "34.72px"},

@@ -53,12 +53,6 @@ const NavBar = () => {
             src={navbar_logo}
             alt="small pizza slice image"
           />
-          {/* <img
-            src={navbar_logo}
-            alt="small pizza slice image"
-            width={{xs: "26.76px", md: "50.83px"}}
-            height={50}
-          /> */}
           <Typography
             sx={{
               alignSelf: "center",
@@ -168,7 +162,6 @@ const NavBar = () => {
             display: { xs: "none", md: "block" },
             width: "168px",
             height: "56px",
-            fontFamily: "Inter",
             fontSize: "25px",
             fontWeight: 700,
             lineHeight: "36.17px",

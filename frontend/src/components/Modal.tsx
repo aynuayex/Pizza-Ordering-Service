@@ -59,7 +59,6 @@ const Modal = ({text, open, setOpen} : Modal) => {
             </Box>
             <Typography
               sx={{
-                fontFamily: "Inter",
                 color: "#05C605",
                 fontSize: "32px",
                 fontWeight: 700,

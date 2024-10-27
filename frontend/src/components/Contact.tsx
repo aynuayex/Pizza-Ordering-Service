@@ -103,7 +103,6 @@ const Contact = () => {
             sx={{
               width: { xs: "44px", md: "74px" },
               height: { xs: "29px", md: "36px" },
-              // fontFamily: "Inter",
               fontSize: { xs: "15px", md: "25px" },
               fontWeight: 600,
               lineHeight: { xs: "21.7px", md: "36.17px" },
@@ -118,7 +117,6 @@ const Contact = () => {
             sx={{
               width: { xs: "58px", md: "74px" },
               height: { xs: "29px", md: "36px" },
-              // fontFamily: "Inter",
               fontSize: { xs: "15px", md: "25px" },
               fontWeight: 600,
               lineHeight: { xs: "21.7px", md: "36.17px" },
@@ -133,7 +131,6 @@ const Contact = () => {
             sx={{
               width: { xs: "71px", md: "118px" },
               height: { xs: "29px", md: "36px" },
-              // fontFamily: "Inter",
               fontSize: { xs: "15px", md: "25px" },
               fontWeight: 600,
               lineHeight: { xs: "21.7px", md: "36.17px" },

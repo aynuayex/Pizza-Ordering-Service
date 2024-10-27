@@ -38,11 +38,8 @@ const Footer = () => {
             lineHeight: "24px",
             letterSpacing: "-0.006em",
             textAlign: "left",
-
             width: "256px",
             height: "24px",
-            //   top: "26.78px",
-            //   left: "86.41px ",
           }}
           // variant="h5"
           color="#FFF"

@@ -372,14 +372,11 @@ function RegisterRestaurant() {
             fullWidth
             startIcon={<FileUploadOutlinedIcon />}
             sx={{
-              // width: "554px",
-              // height: "56px",
               padding: "10px",
               border: "1px dashed black",
               borderRadius: "5px",
               textTransform: "none",
               color: "#FF8100",
-              fontFamily: "Inter",
               fontSize: "18px",
               fontWeight: 500,
               lineHeight: "24px",

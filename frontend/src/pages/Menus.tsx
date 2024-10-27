@@ -122,7 +122,6 @@ const Menus = () => {
         gutterBottom
         sx={{
           color: "#525256",
-          fontFamily: "Inter",
           fontSize: "22px",
           fontWeight: 500,
           lineHeight: "24px",
@@ -331,7 +330,6 @@ const Menus = () => {
                 component="legend"
                 sx={{
                   color: "#00000080",
-                  fontFamily: "Roboto",
                   fontSize: "22px",
                   fontWeight: 400,
                   lineHeight: "24px",
@@ -410,7 +408,6 @@ const Menus = () => {
           borderRadius: "10px",
           textTransform: "none",
           color: "#FF8100",
-          fontFamily: "Inter",
           fontSize: "18px",
           fontWeight: 500,
           lineHeight: "24px",
@@ -428,7 +425,6 @@ const Menus = () => {
           borderRadius: "20px",
           textTransform: "none",
           bgcolor: "#FF8100",
-          fontFamily: "Inter",
           fontSize: "18px",
           fontWeight: 500,
           lineHeight: "24px",

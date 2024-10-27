@@ -66,7 +66,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               textAlign: "left",
               width: "131px",
               height: "24px",
-              // fontFamily: "Roboto",
               fontSize: { xs: "20px", md: "25px" },
               fontWeight: 700,
               lineHeight: { xs: "18.94px", md: "23.67px" },
@@ -82,7 +81,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               textAlign: "left",
               width: { xs: "229px", md: "307px" },
               height: { xs: "9px", md: "28px" },
-              // fontFamily: "Roboto",
               fontSize: { xs: "10px", md: "15px" },
               fontWeight: 400,
               lineHeight: { xs: "9.47px", md: "14.2px" },
@@ -120,7 +118,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               <Typography
                 sx={{
                   textAlign: "left",
-                  fontFamily: "Roboto",
                   fontSize: { xs: "30px", md: "45px" },
                   fontWeight: 700,
                   lineHeight: { xs: "29.7px", md: "44.55px" },
@@ -135,7 +132,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
                 sx={{
                   alignSelf: "start",
                   width: "25px",
-                  fontFamily: "Roboto",
                   fontSize: "15px",
                   fontWeight: 400,
                   lineHeight: "14.85px",
@@ -152,7 +148,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
               sx={{
                 width: { xs: "169px", md: "188px" },
                 height: { xs: "56px", md: "66px" },
-                // fontFamily: "Inter",
                 fontSize: { xs: "25px", md: "32px" },
                 fontWeight: 700,
                 lineHeight: { xs: "36.17px", md: "46.3px" },
@@ -189,7 +184,6 @@ const OrderItem = ({ pizza }: { pizza: PizzasApiResponse }) => {
         />
         <Typography
           sx={{
-            fontFamily: "Roboto",
             fontSize: "20px",
             fontWeight: 700,
             lineHeight: "18.94px",

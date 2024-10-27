@@ -131,7 +131,6 @@ const Orders = () => {
             <VisibilityIcon />
             <Typography
               sx={{
-                fontFamily: "Inter",
                 fontSize: "14px",
                 fontWeight: 400,
                 lineHeight: "14.52px",
@@ -238,7 +237,6 @@ const Orders = () => {
         sx={{
           ml: "16px",
           alignSelf: "center",
-          // fontFamily: "Roboto",
           fontSize: "16px",
           fontWeight: 400,
           lineHeight: "24px",
@@ -428,7 +426,6 @@ const Orders = () => {
             sx={{
               textAlign: "center",
               textTransform: "none",
-              // fontFamily: "Roboto",
               fontSize: "22px",
               fontWeight: 700,
               lineHeight: "24px",
@@ -452,7 +449,6 @@ const Orders = () => {
                 sx={{
                   textAlign: "left",
                   textTransform: "none",
-                  // fontFamily: "Roboto",
                   fontSize: "16px",
                   fontWeight: 400,
                   lineHeight: "24px",
@@ -467,7 +463,6 @@ const Orders = () => {
                 sx={{
                   textAlign: "left",
                   textTransform: "none",
-                  // fontFamily: "Roboto",
                   fontSize: "16px",
                   fontWeight: 400,
                   lineHeight: "24px",
@@ -487,7 +482,6 @@ const Orders = () => {
               sx={{
                 textAlign: "left",
                 textTransform: "none",
-                // fontFamily: "Roboto",
                 fontSize: "16px",
                 fontWeight: 500,
                 lineHeight: "24px",
@@ -523,7 +517,6 @@ const Orders = () => {
                 sx={{
                   textAlign: "left",
                   textTransform: "none",
-                  // fontFamily: "Roboto",
                   fontSize: "16px",
                   fontWeight: 400,
                   lineHeight: "24px",
@@ -538,7 +531,6 @@ const Orders = () => {
                 sx={{
                   textAlign: "left",
                   textTransform: "none",
-                  // fontFamily: "Roboto",
                   fontSize: "16px",
                   fontWeight: 400,
                   lineHeight: "24px",

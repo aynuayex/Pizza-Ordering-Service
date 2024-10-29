@@ -194,10 +194,10 @@ export default function DashboardLayout() {
     },
   ];
 
-  const handleLogout = async (role: string | undefined) => {
+  const handleLogout = async () => {
     await logOut();
-    navigate("/sign-in", {
-      state: { message: "You have logged out of your account!", role },
+    navigate("/dashboard", {
+      state: { message: "You have logged out of your account!" },
     });
     setAuth({
       id: "",
@@ -438,15 +438,11 @@ export default function DashboardLayout() {
           ))}
         </List>
         <Divider color="#F8F8F8" sx={{ opacity: 0.4 }} />
-
-        <IconButton sx={{color: "#FF0000", display: {xs: "block", md: "none"}}} onClick={() => handleLogout(undefined)}>
-          <LogoutOutlinedIcon color="inherit" />
-        </IconButton>
-
-        <Button
-          onClick={() => handleLogout(undefined)}
+        {open ? (
+          <Button
+          onClick={() => handleLogout()}
           sx={{
-            display: {xs: "none", md: "flex"},
+            // display: { xs: open? "flex": "none", md: open? "none": "flex" },
             textTransform: "none",
             fontSize: "18px",
             fontWeight: 500,
@@ -464,6 +460,17 @@ export default function DashboardLayout() {
         >
           Logout
         </Button>
+        ) : (
+          <IconButton
+            sx={{ color: "#FF0000", 
+              // display: { xs: open? "none": "block", md: open? "none": "block" } 
+            }}
+            onClick={() => handleLogout()}
+          >
+            <LogoutOutlinedIcon color="inherit" />
+          </IconButton>
+          
+        )}
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />

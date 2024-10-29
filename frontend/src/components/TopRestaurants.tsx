@@ -39,14 +39,14 @@ type TopRestaurantsApiResponse = {
 const TopRestaurants = () => {
   const axiosPrivate = useAxiosPrivate();
 
-  const times = [1, 2, 3, 4, 5];
+  // const times = [1, 2, 3, 4, 5];
 
   const popularRestaurants = useQuery({
     queryKey: ["restaurants-top"],
     queryFn: async () => {
       const response = await axiosPrivate.get<TopRestaurantsApiResponse[]>(
         "/restaurants/top"
-      );
+    );
       return response.data;
     },
   });

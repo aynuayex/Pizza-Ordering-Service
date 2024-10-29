@@ -18,8 +18,12 @@ import PopularPizzas from "@/components/PopularPizzas";
 import Fasting from "@/components/Fasting";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+// import useAuth from "@/hooks/useAuth";
 
 const Home = () => {
+  // const { auth } = useAuth();
+  // console.log({token: auth?.accessToken});
+
   return (
     <>
       <Box

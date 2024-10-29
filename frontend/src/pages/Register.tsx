@@ -1,11 +1,7 @@
 import {
   Alert,
   Box,
-  Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
   Divider,
   FormControl,
   FormControlLabel,
@@ -30,9 +26,8 @@ import { useContext, useState } from "react";
 import navbar_logo from "../assets/navbar_logo.svg";
 import pizza_slice from "../assets/pizza_slice.svg";
 import axios from "@/api/axios";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
-import smile from "@/assets/smile.png";
 import { LoadingButton } from "@mui/lab";
 import { signUpSchema, SignUpSchema } from "@/schema/signUpSchema";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -43,11 +38,15 @@ import { AbilityContext } from "@/context/AbilityProvider";
 function Register() {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [openDialog, setOpenDialog] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useAuth();
+
+  const location = useLocation();
   const navigate = useNavigate();
   const ability = useContext(AbilityContext);
+
+  const from = location?.state?.from;
+  const pizza = location?.state?.pizza;
 
   const {
     handleSubmit,
@@ -85,14 +84,14 @@ function Register() {
       console.log({ data });
       const response = await axios.post("/register/customer", data);
       if (response.status === 201) {
-        const { success, id, email, fullName, role, accessToken } =
+        const { id, email, fullName, role, accessToken } =
           response.data;
         setAuth({ id, email, fullName, role, accessToken });
 
         updateAbility(role.permissions);
 
-        navigate("/order");
-        // setOpenDialog(true);
+        navigate(from, {state: {pizza}});
+        // navigate("/order");
       }
       console.log(response);
     } catch (err: any) {
@@ -382,6 +381,7 @@ function Register() {
               component={RouterLink}
               to="/sign-in"
               replace={true}
+              state={{from, pizza}}
             >
               {" "}
               Login

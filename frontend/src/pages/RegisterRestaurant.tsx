@@ -3,9 +3,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -31,9 +28,8 @@ import { useContext, useState } from "react";
 import navbar_logo from "../assets/navbar_logo.svg";
 import pizza_slice from "../assets/pizza_slice.svg";
 import axios from "@/api/axios";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
-import smile from "@/assets/smile.png";
 import { LoadingButton } from "@mui/lab";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,10 +43,11 @@ import { createMongoAbility } from "@casl/ability";
 function RegisterRestaurant() {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [openDialog, setOpenDialog] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
+
+  const location = useLocation();
   const ability = useContext(AbilityContext);
 
   const {
@@ -90,7 +87,7 @@ function RegisterRestaurant() {
       console.log({ data });
       const response = await axios.post("/register/restaurant", data);
       if (response.status === 201) {
-        const { success, id, email, fullName, role, accessToken } =
+        const { id, email, fullName, role, accessToken } =
           response.data;
         setAuth({ id, email, fullName, role, accessToken });
 
@@ -98,7 +95,6 @@ function RegisterRestaurant() {
 
         navigate("/dashboard/layout/order");
         // navigate('/add_admin');
-        // setOpenDialog(true);
       }
       console.log(response);
     } catch (err: any) {
@@ -422,6 +418,7 @@ function RegisterRestaurant() {
               component={RouterLink}
               to="/sign-in"
               replace={true}
+              state={{from: location?.pathname}}
             >
               {" "}
               Login

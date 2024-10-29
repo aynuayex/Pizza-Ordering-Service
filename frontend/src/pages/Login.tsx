@@ -54,7 +54,8 @@ function Login() {
     },
   });
 
-  const role = location?.state?.role;
+  const from = location?.state?.from;
+  const pizza = location?.state?.pizza;
   const message = location?.state?.message;
 
   useEffect(() => {
@@ -79,7 +80,7 @@ function Login() {
     try {
       setPersist(data.persist);
       localStorage.setItem("persist", JSON.stringify(data.persist));
-      console.log({ data, role });
+      console.log({ data, from });
       const response = await axios.post("/login", data);
       if (response.status === 200) {
         const { id, email, fullName, success, role, accessToken } =
@@ -88,7 +89,8 @@ function Login() {
         console.log(response.data);
         updateAbility(role.permissions);
 
-        navigate("/dashboard/layout/order", { state: { message: success }, replace: true });
+        navigate(from === "/dashboard"? "/dashboard/layout/order": from, { state: { message: success, pizza }, replace: true });
+        // navigate("/dashboard/layout/order", { state: { message: success }, replace: true });
       }
       console.log(response);
     } catch (err: any) {

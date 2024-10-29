@@ -58,6 +58,7 @@ const Order = () => {
   const location = useLocation();
   const pizza: PizzasApiResponse = location.state?.pizza;
 
+  console.log({pizza})
   const pizzaMenu = useQuery({
     queryKey: ["popular-pizzas"],
     queryFn: async () => {
@@ -75,7 +76,7 @@ const Order = () => {
   } = useForm<OrderSchema>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      toppings: pizza.toppings.map((topping) => ({
+      toppings: pizza?.toppings?.map((topping) => ({
         name: topping.split(" ").join("_"),
         checked: false,
       })),
@@ -86,15 +87,15 @@ const Order = () => {
     try {
       console.log({
         count,
-        totalAmount: count * pizza.price,
+        totalAmount: count * pizza?.price,
         toppings: data,
-        pizzaId: pizza.id,
+        pizzaId: pizza?.id,
       });
       const response = await axiosPrivate.post("/order", {
         count,
-        totalAmount: count * pizza.price,
+        totalAmount: count * pizza?.price,
         toppings: JSON.stringify(data.toppings),
-        pizzaId: pizza.id,
+        pizzaId: pizza?.id,
       });
       console.log(response);
       setOpen(true);
@@ -227,7 +228,7 @@ const Order = () => {
               color: "#000",
             }}
           >
-            {pizza.name}
+            {pizza?.name}
           </Typography>
 
           <Controller
@@ -235,7 +236,7 @@ const Order = () => {
             control={control}
             render={({ field: { value = [], onChange } }) => (
               <Grid container spacing={{xs: 0, md: "5px"}}>
-                {pizza.toppings.map((topping, index) => (
+                {pizza?.toppings?.map((topping, index) => (
                   <Grid item xs={4} key={topping}>
                     <FormControl error={!!errors.toppings?.[index]?.checked}>
                       <FormControlLabel
@@ -372,7 +373,7 @@ const Order = () => {
                   color: "#01C550",
                 }}
               >
-                {count * pizza.price}
+                {count * pizza?.price}
               </Typography>
               <Typography
                 sx={{
@@ -451,7 +452,7 @@ const Order = () => {
           >
             {pizzaMenu.isSuccess &&
               pizzaMenu.data
-                .filter((item) => item.id !== pizza.id)
+                .filter((item) => item.id !== pizza?.id)
                 .slice(0, 5)
                 .map((item) => <RelatedOrderItem key={item.id} pizza={item} />)}
           </Carousel>

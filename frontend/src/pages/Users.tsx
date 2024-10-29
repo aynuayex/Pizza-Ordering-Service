@@ -15,7 +15,6 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
@@ -77,7 +76,6 @@ const Users = () => {
   //consider storing this code in a custom hook (i.e useFetchUsers)
   const {
     data: { data = [], meta } = {}, //your data and api response will probably be different
-    isSuccess,
     isError,
     isRefetching,
     isLoading,
@@ -224,12 +222,11 @@ const Users = () => {
   });
 
   const {
-    data: { data: roleData = [], meta: roleMeta } = {}, // your data and API response may vary
+    data: { data: roleData = [] } = {}, // your data and API response may vary
     isSuccess: isRoleSuccess,
     isError: isRoleError,
     isRefetching: isRoleRefetching,
     isLoading: isRoleLoading,
-    refetch: roleRefetch,
   } = useQuery<RoleApiResponse>({
     queryKey: ["table-data", [], "", 0, 999999, []],
     queryFn: async () => {
@@ -693,7 +690,7 @@ const Users = () => {
                           role.name !== "CUSTOMER"
                       )
                       .map((role) => (
-                        <MenuItem value={role.id}>{role.name}</MenuItem>
+                        <MenuItem key={role.id} value={role.id}>{role.name}</MenuItem>
                       ))}
                 </TextField>
               )}

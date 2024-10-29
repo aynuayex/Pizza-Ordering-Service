@@ -5,7 +5,6 @@ import {
 } from "react-router-dom";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import App from "@/App";
 import RootLayout from "./Layouts/RootLayout";
 import PersistLogin from "./context/PersistLogin";
 import RequireAuth from "./context/RequireAuth";
@@ -34,7 +33,7 @@ const router = createBrowserRouter(
           </Route>
         </Route>
       </Route>
-          <Route path="/dashboard" element={<RegisterRestaurant />} />
+      <Route path="/dashboard" element={<RegisterRestaurant />} />
       <Route element={<PersistLogin />}>
         <Route element={<RequireAuth />}>
           <Route path="/order" element={<Order />} />

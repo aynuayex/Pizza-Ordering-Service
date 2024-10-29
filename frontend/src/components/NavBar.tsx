@@ -1,8 +1,10 @@
 import {
+  Alert,
   AppBar,
   Box,
   Button,
   Link,
+  Snackbar,
   Stack,
   Toolbar,
   Typography,
@@ -10,10 +12,43 @@ import {
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import navbar_logo from "@/assets/navbar_logo.svg";
 import menu from "@/assets/menu.svg";
+import useAuth from "@/hooks/useAuth";
+import useLogOut from "@/hooks/useLogOut";
+import { useState } from "react";
 
 const NavBar = () => {
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const logOut = useLogOut();
+
+  const handleClose = (e?: React.SyntheticEvent | Event, reason?: string) => {
+    console.log(e);
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
+  // console.log({token: auth?.accessToken});
+
+  const handleLogout = async () => {
+    await logOut();
+    setMessage("You have logged out of your account!");
+    setOpen(true);
+    // navigate("/", {
+    //   state: { message: "You have logged out of your account!", role },
+    // });
+    setAuth({
+      id: "",
+      email: "",
+      fullName: "",
+      role: "",
+      accessToken: "",
+    });
+  };
 
   return (
     <AppBar
@@ -31,6 +66,24 @@ const NavBar = () => {
           // gap: { xs: "86px" },
         }}
       >
+        <Snackbar
+          autoHideDuration={8000}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <Alert
+            severity={"info"}
+            variant="filled"
+            onClose={handleClose}
+          >
+            {message}
+          </Alert>
+        </Snackbar>
+
         <Stack
           direction={"row"}
           spacing={{ xs: 4, md: 8 }}
@@ -152,28 +205,51 @@ const NavBar = () => {
             src={menu}
             alt="menu"
           />
-
         </Box>
 
-        <Button
-          onClick={() => navigate("/sign-up")}
-          variant="contained"
-          sx={{
-            display: { xs: "none", md: "block" },
-            width: "168px",
-            height: "56px",
-            fontSize: "25px",
-            fontWeight: 700,
-            lineHeight: "36.17px",
-            letterSpacing: "0.03em",
-            padding: "10px 30px 10px 30px",
-            bgcolor: "#FF890F",
-            textTransform: "none",
-          }}
-          size="large"
-        >
-          Register
-        </Button>
+        {auth?.accessToken ? (
+          <Button
+            onClick={() => handleLogout()}
+            variant="contained"
+            sx={{
+              display: { xs: "none", md: "block" },
+              width: "168px",
+              height: "56px",
+              fontSize: "25px",
+              fontWeight: 700,
+              lineHeight: "36.17px",
+              letterSpacing: "0.03em",
+              padding: "10px 30px 10px 30px",
+              bgcolor: "#FF4D4D",
+              textTransform: "none",
+            }}
+            size="large"
+          >
+            LogOut
+          </Button>
+        ) : (
+          <Button
+            onClick={() =>
+              navigate("/sign-up", { state: { from: location.pathname } })
+            }
+            variant="contained"
+            sx={{
+              display: { xs: "none", md: "block" },
+              width: "168px",
+              height: "56px",
+              fontSize: "25px",
+              fontWeight: 700,
+              lineHeight: "36.17px",
+              letterSpacing: "0.03em",
+              padding: "10px 30px 10px 30px",
+              bgcolor: "#FF890F",
+              textTransform: "none",
+            }}
+            size="large"
+          >
+            Register
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );

@@ -37,7 +37,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 import { mkConfig, generateCsv, download } from "export-to-csv";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 import fileDownload from "@/assets/fileDownload.svg";

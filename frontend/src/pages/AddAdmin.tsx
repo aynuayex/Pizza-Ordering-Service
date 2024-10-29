@@ -1,13 +1,13 @@
 import {
   Alert,
   Box,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormHelperText,
+  // Checkbox,
+  // FormControl,
+  // FormControlLabel,
+  // FormHelperText,
   IconButton,
   InputAdornment,
-  Link,
+  // Link,
   Snackbar,
   Stack,
   TextField,
@@ -24,9 +24,9 @@ import { useEffect, useState } from "react";
 
 import navbar_logo from "../assets/navbar_logo.svg";
 import pizza_slice from "../assets/pizza_slice.svg";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import axios from "@/api/axios";
-import useAuth from "@/hooks/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+// import axios from "@/api/axios";
+// import useAuth from "@/hooks/useAuth";
 import { LoadingButton } from "@mui/lab";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,11 +34,11 @@ import { AddAdminSchema, addAdminSchema } from "@/schema/addAdminSchema";
 
 function AddAdmin() {
   const [open, setOpen] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAuth } = useAuth();
+  // const { setAuth } = useAuth();
 
   const {
     handleSubmit,
@@ -55,7 +55,7 @@ function AddAdmin() {
     },
   });
 
-  const role = location?.state?.role;
+  // const role = location?.state?.role;
   const message = location?.state?.message;
 
   useEffect(() => {
@@ -72,8 +72,8 @@ function AddAdmin() {
 
   const onSubmit: SubmitHandler<AddAdminSchema> = async (data) => {
     navigate('/dashboard/order')
+      console.log({ data });
     // try {
-    //   console.log({ data, role });
     //   const response = await axios.post("/register/admin", {
     //     ...data,
     //     role: role || "OWNER",

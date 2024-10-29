@@ -19,16 +19,16 @@ import {
   Dialog,
   DialogContent,
   Divider,
-  FormControl,
-  FormControlLabel,
+  // FormControl,
+  // FormControlLabel,
   IconButton,
-  InputLabel,
+  // InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   Stack,
   styled,
-  Switch,
+  // Switch,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -493,7 +493,7 @@ const Orders = () => {
                 data.filter((order) => order.id === selectedRow)[0]?.toppings ??
                   "[]"
               ).map((topping: string, index: number) => (
-                <Chip
+                <Chip key={index}
                   sx={{ ml: 1, color: "#FFF", bgcolor: chipColors[index] }}
                   label={
                     <Typography>

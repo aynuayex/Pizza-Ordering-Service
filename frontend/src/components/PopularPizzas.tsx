@@ -8,30 +8,30 @@ import { PizzasApiResponse } from "@/types";
 const PopularPizzas = () => {
   const axiosPrivate = useAxiosPrivate();
 
-  const times = [1, 2, 3, 4, 5];
+  // const times = [1, 2, 3, 4, 5];
 
-  const pizza = [
-    {
-      id: "1",
-      name: "Margarita",
-      price: 150,
-      toppings: ["olive"],
-      createdBy: {
-        id: "string",
-        fullName: "string",
-        email: "string",
-        location: "string",
-        phoneNumber: "string",
-        refreshToken: "string",
-        active: true,
-        roleId: "string",
-        createdAt: "string",
-        updatedAt: "string",
-        restaurantId: "string",
-      },
-      _count: { orders: 5 },
-    },
-  ];
+  // const pizza = [
+  //   {
+  //     id: "1",
+  //     name: "Margarita",
+  //     price: 150,
+  //     toppings: ["olive"],
+  //     createdBy: {
+  //       id: "string",
+  //       fullName: "string",
+  //       email: "string",
+  //       location: "string",
+  //       phoneNumber: "string",
+  //       refreshToken: "string",
+  //       active: true,
+  //       roleId: "string",
+  //       createdAt: "string",
+  //       updatedAt: "string",
+  //       restaurantId: "string",
+  //     },
+  //     _count: { orders: 5 },
+  //   },
+  // ];
 
   const pizzaMenu = useQuery({
     queryKey: ["popular-pizzas"],

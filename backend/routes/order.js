@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ordersController = require("../controllers/ordersController");
-const checkPermissions = require("../middleware/Authorization");
+const checkPermissions = require("../middleware/authorization");
 
 router.get("/",checkPermissions("read", "Orders"),ordersController.handleGetAllOrders);
 // should be specifically there own only, read order history 

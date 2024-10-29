@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyJWT = require("../middleware/verifyJWT");
 const menusController = require("../controllers/menusController");
-const checkPermissions = require("../middleware/Authorization");
+const checkPermissions = require("../middleware/authorization");
 
 // router.get("/popular", checkPermissions("read", "Pizza"), menusController.handleGetPopularPizza);
 router.get("/popular", menusController.handleGetPopularPizza);

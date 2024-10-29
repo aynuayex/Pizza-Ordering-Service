@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const roleController = require("../controllers/roleController");
-const checkPermissions = require("../middleware/Authorization");
+const checkPermissions = require("../middleware/authorization");
 
 router.get("/",checkPermissions("read", "roles"),roleController.handleGetAllRoles);
 router.post("/",checkPermissions("create", "roles"),roleController.handleRoleCreateOrUpdate);

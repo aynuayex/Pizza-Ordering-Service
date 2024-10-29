@@ -179,14 +179,14 @@ const NavBar = () => {
               height: "36px",
               fontFamily: "sans-serif",
               fontSize: "25px",
-              fontWeight: location.pathname === "/orders" ? 700 : 500,
+              fontWeight: location.pathname === "/dashboard" ? 700 : 500,
               lineHeight: "36.17px",
               letterSpacing: "0.03em",
             }}
-            color={location.pathname === "/orders" ? "#FF8100" : "#16120DBF"}
+            color={location.pathname === "/dashboard" ? "#FF8100" : "#16120DBF"}
             underline="none"
             component={RouterLink}
-            to="/orders"
+            to="/dashboard"
           >
             who we are
           </Link>

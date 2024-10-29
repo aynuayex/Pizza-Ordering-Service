@@ -15,9 +15,12 @@ const handleGetAllUsers = async (req, res) => {
     const parsedFilters = JSON.parse(filters);
     const parsedSorting = JSON.parse(sorting);
 
+    const user = await prisma.user.findUnique({where: {email: req.user.email}});
+
     // Build where clause for filtering
     const where = {
       AND: [
+        {restaurantId: user.restaurantId},
         globalFilter
           ? {
               OR: [

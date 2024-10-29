@@ -155,7 +155,7 @@ const handleRegisterRestaurant = async (req, res) => {
       location,
       phoneNumber,
       superAdminRole,
-      createToken
+      // createToken
     );
     // Create Super Admin user
     // const superAdmin = await prisma.user.create({
@@ -253,7 +253,7 @@ const handleRegisterCustomer = async (req, res) => {
       location,
       phoneNumber,
       customerRole,
-      createToken
+      // createToken
     );
     // Create customer user
     // const customer = await prisma.user.create({

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const registerController = require("../controllers/registerController");
-const checkPermissions = require("../middleware/Authorization");
+const checkPermissions = require("../middleware/authorization");
 
 router.get("/",checkPermissions("read", "roles"),userController.handleGetAllUsers);
 router.post("/",checkPermissions("create", "users"),registerController.handleAddAdmin);

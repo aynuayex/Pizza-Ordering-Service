@@ -188,7 +188,8 @@ const NavBar = () => {
             component={RouterLink}
             to="/dashboard"
           >
-            who we are
+            {/* who we are */}
+            Dashboard
           </Link>
 
           <Box

@@ -11,7 +11,7 @@ const RequireAuth = () => {
    auth?.accessToken ? (
       <Outlet />
     ) : (
-      <Navigate to="/sign-up" state={{ from: location.pathname , pizza: location.state.pizza }} replace />
+      <Navigate to="/sign-up" state={{ from: location?.pathname , pizza: location?.state?.pizza }} replace />
     )
   );
 };

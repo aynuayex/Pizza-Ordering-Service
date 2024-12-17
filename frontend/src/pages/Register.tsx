@@ -1,5 +1,6 @@
 import {
   Alert,
+  AlertColor,
   Box,
   Checkbox,
   Divider,
@@ -21,7 +22,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import navbar_logo from "../assets/navbar_logo.svg";
 import pizza_slice from "../assets/pizza_slice.svg";
@@ -38,6 +39,7 @@ import { AbilityContext } from "@/context/AbilityProvider";
 function Register() {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  const [severity, setSeverity] = useState<AlertColor | undefined>();
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useAuth();
 
@@ -48,6 +50,14 @@ function Register() {
   const from = location?.state?.from;
   const pizza = location?.state?.pizza;
 
+  useEffect(() => {
+    if(from === "/order_history") {
+      setSeverity("info")
+      setErrMsg("Please Register or Login to continue Viewing Your Order History!")
+      setOpen(true);
+    }
+  }, [from])
+  
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
@@ -96,6 +106,7 @@ function Register() {
       console.log(response);
     } catch (err: any) {
       console.error(err);
+      setSeverity("error")
       if (!err?.response) {
         setErrMsg("Server can not be reached, Please Try again later!");
       } else if (err.response?.status === 400) {
@@ -127,7 +138,7 @@ function Register() {
             horizontal: "center",
           }}
         >
-          <Alert severity="error" variant="filled" onClose={handleClose}>
+          <Alert severity={severity} variant="filled" onClose={handleClose}>
             {errMsg}
           </Alert>
         </Snackbar>
